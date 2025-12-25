@@ -106,7 +106,7 @@ const Login = () => {
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.para}>
                         Welcome to
-                        <img src="../public/img/logo.png" className={styles.logoicon} />
+                        <img src="/img/logo.png" className={styles.logoicon} />
                         TuneX
                     </div>
 

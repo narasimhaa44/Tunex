@@ -46,7 +46,7 @@ const CoverPage = () => {
                         </div>
 
                         <div className={styles.imageSection}>
-                            <img src="../public/img/logo.png" alt="Headphones" className={styles.headphones} />
+                            <img src="/img/logo.png" alt="Headphones" className={styles.headphones} />
                         </div>
 
                         <div className={styles.buttons}>
