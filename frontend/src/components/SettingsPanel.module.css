@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.panel {
+    background: var(--bg-color, #000000);
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+    position: relative;
+    color: var(--text-color, #fff);
+    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Light Mode Override */
+:global(body:not(.dark-theme)) .panel {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.closeIcon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.closeIcon:hover {
+    opacity: 1;
+}
+
+.title {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.subTitle {
+    font-size: 16px;
+    margin-bottom: 15px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.avatarWrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid currentColor; /* Adapts to text color */
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: white;
+    font-size: 24px;
+}
+
+.avatarWrapper:hover .overlay {
+    opacity: 1;
+}
+
+.changePhotoText {
+    margin-top: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.formGroup {
+    margin-bottom: 15px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s;
+}
+
+:global(body:not(.dark-theme)) .input {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+.input:focus {
+    outline: none;
+    border-color: currentColor;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+:global(body:not(.dark-theme)) .input:focus {
+    background: #fff;
+    border-color: #000;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+:global(body:not(.dark-theme)) .divider {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.saveBtn, .cancelBtn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid currentColor;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+}
+
+/* Dark Mode Buttons */
+.saveBtn {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+.saveBtn:hover {
+    background: #e0e0e0;
+}
+
+.cancelBtn {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cancelBtn:hover {
+    border-color: #fff;
+}
+
+/* Light Mode Buttons Override */
+:global(body:not(.dark-theme)) .saveBtn {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+:global(body:not(.dark-theme)) .saveBtn:hover {
+    background: #333;
+}
+
+:global(body:not(.dark-theme)) .cancelBtn {
+    color: #000;
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+:global(body:not(.dark-theme)) .cancelBtn:hover {
+    border-color: #000;
+}
+
+.saveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.errorMsg {
+    color: #ff4d4d;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.successMsg {
+    color: inherit;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+    opacity: 0.8;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

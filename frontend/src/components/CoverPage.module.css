@@ -1,0 +1,435 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&display=swap");
+
+/* Added theme variables and dark theme as default */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  font-family: "Nata Sans", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container.dark {
+  background-color: #111;
+  color: #fff;
+}
+
+.container.light {
+  background-color: #fff;
+  color: #111;
+}
+
+/* Added theme toggle button */
+.toggleBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.container.dark .toggleBtn {
+  background-color: #fff;
+  color: #111;
+}
+
+.container.dark .toggleBtn:hover {
+  background-color: #ddd;
+  transform: scale(1.1);
+}
+
+.container.light .toggleBtn {
+  background-color: #111;
+  color: #fff;
+}
+
+.container.light .toggleBtn:hover {
+  background-color: #333;
+  transform: scale(1.1);
+}
+
+/* Netflix X Animation */
+.xContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.xStatic {
+  font-size: 120px;
+  font-weight: 600;
+  /* letter-spacing: -5px; */
+}
+
+.container.dark .xStatic {
+  color: #fff;
+}
+
+.container.light .xStatic {
+  color: #111;
+}
+
+.xAnimated {
+  font-size: 120px;
+  font-weight: 600;
+  /* letter-spacing: -8px; */
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  animation: netflixX 2.5s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.container.dark .xAnimated {
+  color: #fff;
+}
+
+.container.light .xAnimated {
+  color: #111;
+}
+
+@keyframes netflixX {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(25);
+    opacity: 0;
+  }
+}
+
+/* Content Section */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 40px;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  animation: fadeInContent 0.8s ease-out forwards;
+  opacity: 0;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 72px;
+  font-weight: 600;
+  letter-spacing: -2px;
+  margin: 0;
+}
+
+.titleX {
+  font-size: 72px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.tagline {
+  margin: 0;
+}
+
+.tagline p {
+  font-size: 24px;
+  font-weight: 300;
+  margin: 0;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.imageSection {
+  margin: 20px 0;
+}
+
+.headphones {
+  width: 280px;
+  height: auto;
+  animation: floatIn 1s ease-out;
+}
+
+.container.dark .headphones {
+  filter: drop-shadow(0 10px 40px rgba(255, 255, 255, 0.15));
+}
+
+.container.light .headphones {
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes floatIn {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.buttonPrimary,
+.buttonSecondary {
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  font-family: "Nata Sans", sans-serif;
+}
+
+.container.dark .buttonPrimary {
+  background-color: #fff;
+  color: #111;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.container.dark .buttonPrimary:hover {
+  background-color: #ddd;
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.container.light .buttonPrimary {
+  background-color: #111;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.container.light .buttonPrimary:hover {
+  background-color: #333;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.container.dark .buttonSecondary {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.container.dark .buttonSecondary:hover {
+  background-color: #fff;
+  color: #111;
+  transform: translateY(-2px);
+}
+
+.container.light .buttonSecondary {
+  background-color: transparent;
+  color: #111;
+  border: 2px solid #111;
+}
+
+.container.light .buttonSecondary:hover {
+  background-color: #f5f5f5;
+  transform: translateY(-2px);
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.featureIcon {
+  font-size: 32px;
+}
+
+.container.dark .featureIcon {
+  color: #fff;
+}
+
+.container.light .featureIcon {
+  color: #111;
+}
+
+.feature p {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* Improved responsive design for small screens */
+@media (max-width: 768px) {
+  .toggleBtn {
+    width: 44px;
+    height: 44px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .title {
+    font-size: 48px;
+  }
+
+  .titleX {
+    font-size: 48px;
+  }
+
+  .tagline p {
+    font-size: 18px;
+  }
+
+  .headphones {
+    width: 200px;
+  }
+
+  .features {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .buttons {
+    gap: 12px;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    padding: 12px 32px;
+    font-size: 14px;
+  }
+
+  .content {
+    gap: 30px;
+  }
+
+  @keyframes netflixX {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(20);
+      opacity: 0;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .toggleBtn {
+    width: 40px;
+    height: 40px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .title {
+    font-size: 36px;
+  }
+
+  .titleX {
+    font-size: 36px;
+  }
+
+  .tagline p {
+    font-size: 16px;
+  }
+
+  .headphones {
+    width: 150px;
+  }
+
+  .features {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .buttons {
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  .buttonPrimary,
+  .buttonSecondary {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .featureIcon {
+    font-size: 28px;
+  }
+
+  .content {
+    gap: 24px;
+    padding: 16px;
+  }
+
+  @keyframes netflixX {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(15);
+      opacity: 0;
+    }
+  }
+}

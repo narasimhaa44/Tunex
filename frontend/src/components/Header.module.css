@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nata+Sans:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+.header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:10px;
+    background-color: var(--header-bg);
+    color: var(--text-color);
+    border-radius: 10px;
+    font-family: "Nata Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    gap: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.logo{
+    display:flex;
+    align-items: center;
+    gap:20px;
+}
+.searchInput{
+    width:200px;
+    border:none;
+    outline: none;
+    padding:5px;
+    height:40px;
+    font-size: 20px;
+    background: transparent;
+    color: var(--text-color);
+}
+.log{
+    width:100px;
+    height:100px;
+    object-fit: cover;
+}
+.right{
+    display:flex;
+    align-items: center;
+    gap:10px;
+}
+.search{
+    display:flex;
+    align-items: center;
+    border-radius: 10px;
+    border:1px solid var(--border-color);
+    padding-left: 10px;
+    background-color: var(--input-bg);
+    transition: background-color 0.3s, border-color 0.3s;
+    color: var(--text-color);
+}
+.profile {
+    display: flex;
+    align-items: center;
+}
+.name{
+    font-size: 100px;
+}
+@media screen and (max-width: 600px) {
+    .header{
+        padding:10px;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .logo {
+        margin-right: 0;
+        justify-content: center;
+    }
+    .name {
+        font-size: 40px;
+    }
+    .searchInput{
+        width:100%;
+        max-width: 200px;
+        font-size: 16px;
+        height:30px;
+    }
+    .search{
+        display:flex;
+        gap:5px;
+        width: 100%;
+        justify-content: flex-start;
+    }
+    .profile {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .right{
+        display:flex;
+        gap:10px;
+    }
+}

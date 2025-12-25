@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nata+Sans:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 102vh;
+    font-family: "Nata Sans", sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.light {
+    background-color: #f8f9fa;
+    color: #000000;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 350px;
+    padding: 40px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.dark .form {
+    background: rgb(0, 0, 0);
+    border: 1px solid rgb(28, 28, 28);
+    box-shadow: 0 8px 32px 0 rgb(56, 54, 54); 
+}
+
+.light .form {
+    background: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.para {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.orContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 5px 0;
+}
+
+.orContainer::before,
+.orContainer::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.25;
+}
+
+.orText {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0.6;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    outline: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-family: "Nata Sans", sans-serif;
+    text-align: center;
+    
+}
+
+.dark .input {
+    background-color: #2d2d2d;
+    color: #fff;
+    border-color: #267cd1;
+}
+
+.dark .input:focus {
+    border-color: #267cd1;
+    box-shadow: 0 0 0 2px rgba(3, 186, 253, 0.99);
+}
+
+.light .input {
+    background-color: #fff;
+    color: #000;
+    border-color: #ccc;
+}
+
+.light .input:focus {
+    border-color: #138af2;
+    box-shadow: 0 0 0 2px rgba(0, 149, 255, 0.2);
+}
+
+.button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.dark .button {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.light .button {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.button:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+.googleicon {
+    width: 20px;
+    height: 20px;
+}
+.button1 {
+    width: 100%;
+    padding: 12px;
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    margin-top: 10px;
+}
+.dark .button1 {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.light .button1 {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.button1:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}
+
+.button1:active {
+    transform: scale(0.98);
+}
+.logoicon {
+    width: 100px;
+    height:100px;
+}
+.themeToggle {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark .themeToggle {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.dark .themeToggle:hover {
+  background-color: #ddd;
+  transform: scale(1.1);
+}
+
+.light .themeToggle {
+    background-color: black;
+    color: #ffffff;
+}
+
+.light .themeToggle:hover {
+  background-color: #333;
+  transform: scale(1.1);
+}
