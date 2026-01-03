@@ -259,7 +259,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
 
     const handleSignOut = async () => {
         try {
-            await axios.post("http://localhost:5000/api/auth/logout");
+            await axios.post("https://tunex-15at.onrender.com/api/auth/logout");
             window.location.href = "/login";
         } catch {
             console.log("Logout failed");

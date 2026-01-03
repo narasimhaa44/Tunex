@@ -29,7 +29,7 @@ export default function AlbumPage({
 
     const fetchAlbum = () => {
         setLoading(true);
-        axios.get(`http://localhost:5000/api/albums/${albumId}`)
+        axios.get(`https://tunex-15at.onrender.com/api/albums/${albumId}`)
             .then(res => {
                 setAlbum(res.data.album);
                 setLoading(false);
@@ -42,7 +42,7 @@ export default function AlbumPage({
 
     const checkLikeStatus = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/user/liked-albums");
+            const res = await axios.get("https://tunex-15at.onrender.com/api/user/liked-albums");
             if (res.data.success) {
                 const liked = res.data.likedAlbums.some(id => id === albumId || id._id === albumId);
                 setIsLiked(liked);
@@ -54,7 +54,7 @@ export default function AlbumPage({
 
     const toggleLike = async () => {
         try {
-            const res = await axios.post("http://localhost:5000/api/user/like-album", { albumId });
+            const res = await axios.post("https://tunex-15at.onrender.com/api/user/like-album", { albumId });
             if (res.data.success) {
                 setIsLiked(res.data.isLiked);
             }
@@ -87,7 +87,7 @@ export default function AlbumPage({
 
     const openAddSongModal = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/songs/all");
+            const res = await axios.get("https://tunex-15at.onrender.com/api/songs/all");
             if (res.data.songs) {
                 setAllSongs(res.data.songs);
                 setIsModalOpen(true);
@@ -99,7 +99,7 @@ export default function AlbumPage({
 
     const addSongToAlbum = async (songId) => {
         try {
-            await axios.post(`http://localhost:5000/api/albums/${albumId}/add-song`, { songId });
+            await axios.post(`https://tunex-15at.onrender.com/api/albums/${albumId}/add-song`, { songId });
             // Refresh album data
             fetchAlbum();
             setIsModalOpen(false);

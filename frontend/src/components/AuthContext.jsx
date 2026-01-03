@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/auth/me", {
+        axios.get("https://tunex-15at.onrender.com/api/auth/me", {
             withCredentials: true,
         })
             .then((res) => {
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
     // Logout
     const logout = async () => {
-        await axios.post("http://localhost:5000/api/auth/logout");
+        await axios.post("https://tunex-15at.onrender.com/api/auth/logout");
         setUser(null);
     };
 

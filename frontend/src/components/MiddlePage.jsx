@@ -402,8 +402,8 @@ const MiddlePage = ({
             try {
                 console.log("Fetching user data...");
                 const [likedRes, playlistRes] = await Promise.all([
-                    axios.get("http://localhost:5000/api/user/liked-songs"),
-                    axios.get("http://localhost:5000/api/playlists/my-playlists")
+                    axios.get("https://tunex-15at.onrender.com/api/user/liked-songs"),
+                    axios.get("https://tunex-15at.onrender.com/api/playlists/my-playlists")
                 ]);
 
                 console.log("Liked Songs Response:", likedRes.data);
@@ -474,7 +474,7 @@ const MiddlePage = ({
         }
         try {
             console.log("Creating playlist:", newPlaylistName);
-            const res = await axios.post("http://localhost:5000/api/playlists/create", { title: newPlaylistName });
+            const res = await axios.post("https://tunex-15at.onrender.com/api/playlists/create", { title: newPlaylistName });
             console.log("Create Playlist Response:", res.data);
             if (res.data.success) {
                 setPlaylists([...playlists, res.data.playlist]);
@@ -535,7 +535,7 @@ const MiddlePage = ({
     const addToLiked = async (song) => {
         try {
             console.log("Toggling like for song:", song.id);
-            const res = await axios.post("http://localhost:5000/api/user/like-song", { songId: song.id });
+            const res = await axios.post("https://tunex-15at.onrender.com/api/user/like-song", { songId: song.id });
             console.log("Toggle Like Response:", res.data);
             if (res.data.success) {
                 // Update local liked songs state
@@ -553,7 +553,7 @@ const MiddlePage = ({
     const addToPlaylist = async (playlistId, songId) => {
         try {
             console.log("Adding song:", songId, "to playlist:", playlistId);
-            const res = await axios.post("http://localhost:5000/api/playlists/add-song", { playlistId, songId });
+            const res = await axios.post("https://tunex-15at.onrender.com/api/playlists/add-song", { playlistId, songId });
             console.log("Add to Playlist Response:", res.data);
             if (res.data.success) {
                 alert("Added to playlist!");

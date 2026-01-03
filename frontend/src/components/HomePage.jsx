@@ -28,8 +28,8 @@ const Home = () => {
         const fetchData = async () => {
             try {
                 const [songsRes, albumsRes] = await Promise.all([
-                    axios.get("http://localhost:5000/api/songs/all"),
-                    axios.get("http://localhost:5000/api/albums")
+                    axios.get("https://tunex-15at.onrender.com/api/songs/all"),
+                    axios.get("https://tunex-15at.onrender.com/api/albums")
                 ]);
 
                 console.log("Fetched songs:", songsRes.data.songs);
