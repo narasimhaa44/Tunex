@@ -80,3 +80,13 @@ module.exports.addSongToAlbum = async (req, res) => {
     res.status(500).json({ ok: false, message: 'Add song failed' });
   }
 };
+// delete album
+module.exports.deleteAlbum = async (req, res) => {
+  try {
+    const album = await Album.findByIdAndDelete(req.params.id);
+    if (!album) return res.status(404).json({ ok: false, message: 'Album not found' });
+    res.json({ ok: true, message: 'Album deleted' });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: 'Delete album failed' });
+  }
+};

@@ -387,6 +387,7 @@ const MiddlePage = ({
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState("");
+    const [isShuffle, setIsShuffle] = useState(false); // ⭐ NEW
     const navigate = useNavigate();
 
     // Auto-switch to Discover on search
@@ -501,12 +502,22 @@ const MiddlePage = ({
     const togglePlayPause = () => setIsPlaying(!isPlaying);
 
     const playNextSong = () => {
-        // Logic depends on current list (all songs, liked, playlist)
-        // For simplicity, using 'songs' prop as main list for now, 
-        // but ideally should track 'currentQueue'
-        const index = songs.findIndex((s) => s.id === currentSong.id);
-        const next = (index + 1) % songs.length;
-        setCurrentSong(songs[next]);
+        if (!songs || songs.length === 0) return;
+
+        let nextIndex;
+        if (isShuffle) {
+            // Random index
+            nextIndex = Math.floor(Math.random() * songs.length);
+            // Optional: avoid repeating same song immediately if list > 1
+            if (songs.length > 1 && songs[nextIndex].id === currentSong?.id) {
+                nextIndex = (nextIndex + 1) % songs.length;
+            }
+        } else {
+            const index = songs.findIndex((s) => s.id === currentSong?.id);
+            nextIndex = (index + 1) % songs.length;
+        }
+
+        setCurrentSong(songs[nextIndex]);
         setIsPlaying(true);
     };
 
@@ -649,6 +660,7 @@ const MiddlePage = ({
                         currentSong={currentSong}
                         isPlaying={isPlaying}
                         songs={songs}
+                        setSongs={setSongs} // ⭐ PASS setSongs
                         playPreviousSong={playPreviousSong}
                         playNextSong={playNextSong}
                         togglePlayPause={togglePlayPause}
@@ -659,6 +671,8 @@ const MiddlePage = ({
                         formatTime={formatTime}
                         isPlayerModalOpen={isPlayerModalOpen}
                         setIsPlayerModalOpen={setIsPlayerModalOpen}
+                        isShuffle={isShuffle} // ⭐
+                        setIsShuffle={setIsShuffle} // ⭐
                     />
                 )}
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaArrowLeft, FaPlay, FaPause, FaPlus, FaTimes, FaStepForward, FaStepBackward, FaRandom, FaHeart, FaDownload, FaEllipsisH } from 'react-icons/fa';
+import { FaArrowLeft, FaPlay, FaPause, FaPlus, FaTimes, FaStepForward, FaStepBackward, FaRandom, FaHeart, FaDownload, FaEllipsisH, FaTrash } from 'react-icons/fa';
 import styles from './MiddlePage.module.css';
 
 export default function AlbumPage({
@@ -19,7 +19,10 @@ export default function AlbumPage({
     handleProgressBarClick,
     formatTime,
     isPlayerModalOpen,
-    setIsPlayerModalOpen
+    setIsPlayerModalOpen,
+    setSongs, // ⭐
+    isShuffle, // ⭐
+    setIsShuffle // ⭐
 }) {
     const [album, setAlbum] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -70,6 +73,19 @@ export default function AlbumPage({
     }, [albumId]);
 
     const handleSongClick = (song) => {
+        // Set context to this album's songs
+        if (album && album.songs) {
+            const formattedSongs = album.songs.map(s => ({
+                id: s._id,
+                title: s.title,
+                artist: s.artist,
+                duration: s.duration,
+                audio: s.audioUrl,
+                cover: s.coverUrl
+            }));
+            setSongs(formattedSongs);
+        }
+
         if (currentSong?.id === song._id) {
             setIsPlaying(!isPlaying);
         } else {
@@ -82,6 +98,20 @@ export default function AlbumPage({
                 cover: song.coverUrl
             });
             setIsPlaying(true);
+        }
+    };
+
+    const handleDeleteAlbum = async () => {
+        if (!window.confirm("Are you sure you want to delete this album?")) return;
+        try {
+            const res = await axios.delete(`https://tunex-15at.onrender.com/api/albums/${albumId}`);
+            if (res.data.ok) {
+                alert("Album deleted");
+                onBack(); // Go back to Home
+            }
+        } catch (err) {
+            console.error("Delete failed", err);
+            alert("Failed to delete album");
         }
     };
 
@@ -169,7 +199,12 @@ export default function AlbumPage({
 
                         {/* Action Buttons Row */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '20px' }}>
-                            <FaRandom size={20} style={{ color: 'var(--text-color)', opacity: 0.7, cursor: 'pointer' }} title="Shuffle" />
+                            <FaRandom
+                                size={20}
+                                style={{ color: isShuffle ? '#1db954' : 'var(--text-color)', opacity: isShuffle ? 1 : 0.7, cursor: 'pointer' }}
+                                title="Shuffle"
+                                onClick={() => setIsShuffle(!isShuffle)}
+                            />
                             <div
                                 onClick={toggleLike}
                                 style={{
@@ -189,7 +224,13 @@ export default function AlbumPage({
                             <div style={{ border: '2px solid #888', borderRadius: '50%', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                                 <FaDownload size={16} style={{ color: 'var(--text-color)' }} />
                             </div>
-                            <FaEllipsisH size={20} style={{ color: 'var(--text-color)', opacity: 0.7, cursor: 'pointer' }} />
+                            {/* Delete Option */}
+                            <FaTrash
+                                size={20}
+                                style={{ color: 'var(--text-color)', opacity: 0.7, cursor: 'pointer' }}
+                                title="Delete Album"
+                                onClick={handleDeleteAlbum}
+                            />
                         </div>
                     </div>
                 </div>
