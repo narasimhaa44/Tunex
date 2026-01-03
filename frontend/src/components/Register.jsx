@@ -111,7 +111,7 @@ const Register = () => {
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.para}>
                         Create Account
-                        <img src="../public/img/logo.png" className={styles.logoicon} /> TuneX
+                        <img src="/img/logo.png" className={styles.logoicon} /> TuneX
                     </div>
 
                     <div className={styles.orContainer}>

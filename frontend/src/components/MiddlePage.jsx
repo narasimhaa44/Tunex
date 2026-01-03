@@ -373,10 +373,11 @@ const MiddlePage = ({
     progress,
     currentTime,
     duration,
-    audioRef
+    audioRef,
+    searchQuery
 }) => {
 
-    const [active, setActive] = useState("Library");
+    const [active, setActive] = useState("Home");
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
@@ -387,6 +388,13 @@ const MiddlePage = ({
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState("");
     const navigate = useNavigate();
+
+    // Auto-switch to Discover on search
+    useEffect(() => {
+        if (searchQuery && searchQuery.trim().length > 0) {
+            setActive("Discover");
+        }
+    }, [searchQuery]);
 
     // Fetch User Data (Liked Songs & Playlists)
     useEffect(() => {
@@ -430,7 +438,7 @@ const MiddlePage = ({
 
     const menuItems = [
         { name: "Home", icon: <GoHomeFill className={styles.icon} /> },
-        { name: "Library", icon: <MdLibraryMusic className={styles.icon} /> },
+        { name: "Discover", icon: <FaCompass className={styles.icon} /> },
         { name: "Liked Songs", icon: <FaHeart className={styles.icon} /> },
         { name: "Upload", icon: <FaCloudUploadAlt className={styles.icon} /> },
         { name: "Create Album", icon: <MdAlbum className={styles.icon} /> },
@@ -710,11 +718,11 @@ const MiddlePage = ({
                     />
                 )}
 
-                {/* Library Page */}
+                {/* Library Page -> NOW SHOWS LIKED SONGS (Personal) */}
                 {active === "Library" && (
                     <SongListSection
-                        title="All Songs"
-                        songs={songs}
+                        title="Your Library"
+                        songs={likedSongs}
                         currentSong={currentSong}
                         handleSongClick={handleSongClick}
                         draggedIndex={draggedIndex}
@@ -775,6 +783,11 @@ const MiddlePage = ({
                                 <p>Create a new album to get started!</p>
                             </div>
                         )}
+
+                        {/* GLOBAL SONGS ON HOME TOO? Optional, but commonly Home is a mix. 
+                            For now, let's leave Home as Albums-focused or add a "Recent Uploads" section if requested. 
+                            The user specially asked for "Discover" to have global songs. 
+                        */}
                     </>
                 )}
 
@@ -802,8 +815,37 @@ const MiddlePage = ({
                         </div>
                     </div>
                 )}
+
+                {/* Discover Page -> NOW SHOWS ALL GLOBAL SONGS */}
                 {active === "Discover" && (
-                    <CenterText title="Discover" desc="Find new music you'll love!" />
+                    <SongListSection
+                        title={searchQuery ? `Search Results for "${searchQuery}"` : "Discover New Music"}
+                        songs={
+                            searchQuery
+                                ? songs.filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()) || s.artist.toLowerCase().includes(searchQuery.toLowerCase()))
+                                : songs
+                        }
+                        currentSong={currentSong}
+                        handleSongClick={handleSongClick}
+                        draggedIndex={draggedIndex}
+                        setDraggedIndex={setDraggedIndex}
+                        playPreviousSong={playPreviousSong}
+                        playNextSong={playNextSong}
+                        isPlayerModalOpen={isPlayerModalOpen}
+                        setIsPlayerModalOpen={setIsPlayerModalOpen}
+                        togglePlayPause={togglePlayPause}
+                        isPlaying={isPlaying}
+                        formatTime={formatTime}
+                        currentTime={currentTime}
+                        duration={duration}
+                        handleProgressBarClick={handleProgressBarClick}
+                        progress={progress}
+                        likedSongs={likedSongs}
+                        addToLiked={addToLiked}
+                        playlists={playlists}
+                        addToPlaylist={addToPlaylist}
+                        setShowPlaylistModal={setShowPlaylistModal}
+                    />
                 )}
             </div>
         </div>

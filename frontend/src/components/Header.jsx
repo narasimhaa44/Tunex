@@ -228,7 +228,7 @@ import SettingsPanel from "./SettingsPanel";
 
 axios.defaults.withCredentials = true;
 
-const Header = () => {
+const Header = ({ searchQuery, setSearchQuery }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [theme, setTheme] = useState("dark");
     const { user } = useAuth();
@@ -287,7 +287,13 @@ const Header = () => {
                 <div className={styles.right}>
                     <div className={styles.search}>
                         <CiSearch />
-                        <input type="text" placeholder="Search" className={styles.searchInput} />
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className={styles.searchInput}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                     </div>
 
                     <div className={styles.profile}>
@@ -303,9 +309,7 @@ const Header = () => {
                                 <img
                                     src={user?.avatar || "/img/profile.png"}
                                     alt="profile"
-                                    width="50"
-                                    height="50"
-                                    className="rounded-circle"
+                                    className={styles.profileImage}
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = "/img/profile.png";

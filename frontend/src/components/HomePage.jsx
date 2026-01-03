@@ -12,7 +12,7 @@ axios.defaults.withCredentials = true;
 const Home = () => {
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [activePage, setActivePage] = useState("Library");
+    const [activePage, setActivePage] = useState("Home");
     const [progress, setProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -20,6 +20,8 @@ const Home = () => {
 
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]);
+
+    const [searchQuery, setSearchQuery] = useState("");
 
     // Fetch songs FROM BACKEND
     useEffect(() => {
@@ -101,7 +103,7 @@ const Home = () => {
 
     return (
         <>
-            <Header />
+            <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
             <MiddlePage
                 currentSong={currentSong}
@@ -117,6 +119,7 @@ const Home = () => {
                 currentTime={currentTime}
                 duration={duration}
                 audioRef={audioRef}
+                searchQuery={searchQuery}
             />
 
             {/* Music player bar only in non-list pages */}
