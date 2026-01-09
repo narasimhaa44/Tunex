@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("https://tunex-15at.onrender.com/api/auth/me", {
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
             withCredentials: true,
         })
             .then((res) => {
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
     // Logout
     const logout = async () => {
-        await axios.post("https://tunex-15at.onrender.com/api/auth/logout");
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
         setUser(null);
     };
 

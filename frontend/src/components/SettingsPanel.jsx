@@ -41,7 +41,7 @@ const SettingsPanel = ({ onClose }) => {
             if (avatarFile) formData.append("avatar", avatarFile);
 
             const res = await axios.put(
-                "https://tunex-15at.onrender.com/api/auth/update",
+                `${import.meta.env.VITE_API_BASE_URL}/api/auth/update`,
                 formData,
                 {
                     headers: { "Content-Type": "multipart/form-data" },

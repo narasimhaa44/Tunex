@@ -84,7 +84,7 @@ const Register = () => {
 
         try {
             const res = await axios.post(
-                "https://tunex-15at.onrender.com/api/auth/register",
+                `${import.meta.env.VITE_API_BASE_URL}/api/auth/register`,
                 {
                     username,
                     password,

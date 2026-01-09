@@ -116,12 +116,37 @@
     flex: 1;
     background-color: var(--header-bg);
     border-radius: 15px;
-    padding: 30px;
-    overflow-y: auto;
+    /* padding: 30px; REMOVED to allow contentWrapper to fill */
+    overflow: hidden;
     border: 2px solid var(--text-color);
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+}
+
+.contentWrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    position: relative; /* For absolutely positioned mini player */
+    gap: 30px; /* Space between main content and side player */
+}
+
+.contentWrapper.withMiniPlayer {
+    padding-bottom: 70px; /* Reduced from 100px */
+}
+
+.mainContent {
+    flex: 1;
+    min-width: 0; /* Prevents overflow in flexbox */
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 15px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.mainContent::-webkit-scrollbar {
+    display: none;
 }
 
 .right::-webkit-scrollbar {
@@ -162,7 +187,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 8px; /* Reduced from 20px */
     overflow-y: auto;
     padding-right: 10px;
     scrollbar-width: none;
@@ -183,7 +208,7 @@
 .songList {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px; /* Reduced from 10px */
 }
 
 .songItem {
@@ -787,4 +812,1128 @@
     height: 1px;
     background-color: rgba(255, 255, 255, 0.1);
     margin: 4px 0;
+}
+
+/* Notification Toast */
+.notificationToast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1db954;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    z-index: 5000;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Queue UI */
+.queueOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 2500;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.queueSidebar {
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    padding: 30px;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.queueSidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.queueSidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.queueHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.queueHeader h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.queueHeader span {
+    cursor: pointer;
+    color: #b3b3b3;
+    font-weight: bold;
+}
+
+.queueItemActive {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.queueItemActive img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.queueTitle {
+    margin: 0;
+    font-weight: 700;
+    color: white;
+    font-size: 0.95rem;
+}
+
+.queueItemActive .queueTitle {
+    color: #1ed760;
+}
+
+.queueArtist {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #b3b3b3;
+}
+
+.queueSection {
+    margin-top: 32px;
+    width: 100%;
+}
+
+.queueSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.queueSection h3 {
+    font-size: 1rem;
+    color: #b3b3b3;
+    margin: 0;
+}
+
+.queueSectionHeader span {
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid #444;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.emptyText {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.queueList {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.queueItem {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+.queueItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.queueItem span {
+    width: 20px;
+    color: #b3b3b3;
+    font-size: 0.8rem;
+}
+.img1{
+    width:auto;
+    height:auto;
+}
+.img1 img{
+    width:100px;
+    height:100px;
+}
+.queueItem img {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.queueItem:hover img {
+    transform: scale(1.05);
+}
+
+.queueInfo {
+    flex: 1;
+}
+
+/* Album Grid */
+.albumGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+.albumCard {
+    cursor: pointer;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.albumCard:hover {
+    transform: translateY(-8px);
+}
+
+.albumCoverWrapper {
+    position: relative;
+    margin-bottom: 12px;
+    aspect-ratio: 1/1;
+}
+
+.albumCoverWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Song Card Grid for Discover */
+.songGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.songCard {
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.songCard:hover {
+    transform: translateY(-8px);
+}
+
+.songCardCoverWrapper {
+    position: relative;
+    aspect-ratio: 1/1;
+    margin-bottom: 10px;
+}
+
+.songCardCoverWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.songCardActions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s;
+}
+
+.songCard:hover .songCardActions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.actionBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #1db954;
+    border: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+.actionBtn.heart {
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+}
+
+.songCard h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songCard p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: #b3b3b3;
+}
+
+.albumCard h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.albumCard p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #b3b3b3;
+}
+
+/* Global fadeIn */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Song Card Grid for Discover */
+.songGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.songCard {
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+    background: transparent;
+}
+
+.songCard:hover {
+    transform: translateY(-8px);
+}
+
+.songCardCoverWrapper {
+    position: relative;
+    aspect-ratio: 1/1;
+    margin-bottom: 12px;
+}
+
+.songCardCoverWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.songCardActions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s;
+}
+
+.songCard:hover .songCardActions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.actionBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #1db954;
+    border: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+.actionBtn.heart {
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+}
+
+.songCard h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songCard p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: #b3b3b3;
+}
+
+/* Mini Player Bar Styles - Redesigned for Premium Look */
+.miniPlayerBar {
+    position: absolute;
+    bottom: 25px;
+    left: 40px;
+    right: 40px;
+    height: 90px;
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    padding: 0 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.miniPlayerBar:hover {
+    background: rgba(25, 25, 25, 0.85);
+    transform: translateY(-5px) scale(1.01);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.miniInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.miniCover {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.miniText {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+.miniText h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.miniText p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.miniControls {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Increased gap */
+    justify-content: center;
+    padding: 0 10px;
+}
+
+.miniIcon {
+    font-size: 18px;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.miniIcon:hover {
+    color: white;
+}
+
+.activeIcon {
+    color: #1ed760 !important;
+}
+
+.miniPlayBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.miniPlayBtn:hover {
+    transform: scale(1.1);
+}
+
+.miniProgressRow {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.miniTime {
+    font-size: 0.75rem;
+    color: #888;
+    min-width: 35px;
+    transition: opacity 0.3s;
+}
+
+.miniProgressBar {
+    flex: 1;
+    max-width: 250px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.miniProgressFill {
+    height: 100%;
+    background: #1ed760;
+    border-radius: 2px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.5);
+}
+
+/* Glass Modal Styles - Intensified */
+.glassModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.glassContent {
+    width: 90%;
+    max-width: 440px; /* Reduced from 480px */
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px; /* Reduced from 40px */
+    padding: 30px; /* Reduced from 40px */
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* Reduced from 32px */
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    transform: translateY(0);
+    animation: glassSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes glassSlideUp {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.glassHeader {
+    width: 100%;
+}
+
+.glassCover {
+    width: 100%;
+    max-height: 400px; /* Added max-height */
+    aspect-ratio: 1/1;
+    border-radius: 20px; /* Reduced from 24px */
+    object-fit: cover;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.glassInfo {
+    text-align: center;
+}
+
+.glassInfo h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.glassArtist {
+    font-size: 1.1rem;
+    color: #b3b3b3;
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.glassControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;;
+}
+
+.glassIcon {
+    font-size: 24px;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.glassIcon:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.glassPlayBtn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.glassPlayBtn:hover {
+    transform: scale(1.08);
+    background-color: white;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+.glassPlayBtn:active {
+    transform: scale(0.95);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+.glassProgressRow {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.glassTime {
+    font-size: 0.85rem;
+    color: #888;
+    min-width: 40px;
+}
+
+.glassProgressBar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+}
+
+.glassProgressFill {
+    height: 100%;
+    background: white;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+
+.glassProgressFill::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glassProgressBar:hover .glassProgressFill::after {
+    transform: translateY(-50%) scale(1);
+}
+
+.glassQueue {
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.upNextLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #1ed760;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .miniPlayerBar {
+        left: 15px;
+        right: 15px;
+        bottom: 10px;
+        padding: 0 15px;
+        grid-template-columns: minmax(0, 1fr) auto; /* Strictly 2 columns */
+        height: 75px;
+        border-radius: 20px;
+        position: fixed;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .miniInfo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .miniCover {
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        margin-top: 6px;
+    }
+    .miniText {
+        /* Remove max-width to allow flex to handle it */
+    }
+    .miniText h4 {
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+    .miniProgressBar, .miniTime, .miniProgressRow {
+        display: none !important; /* Completely hide row to prevent grid issues */
+    }
+    
+    .miniControls {
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 6px;
+    }
+    .head{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+    .glassContent {
+        width: 92%;
+        border-radius: 24px;
+        max-height: auto;
+        overflow-y: visible;
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .glassTopRow {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .glassCover1 {
+        width: 300px;
+        height: 300px;
+        max-height: 300px;
+        min-width: 300px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .glassCover{
+        width: 100%;
+        height: 100%;
+    }
+
+    .glassInfo {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         padding: 0;
+         max-width: 100%;
+         flex: 1;
+         overflow: hidden;
+    }
+
+    .glassInfo h2 {
+        font-size: 1.25rem;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+    
+    .glassInfo .glassArtist {
+        font-size: 0.85rem;
+        margin-top: 4px;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+    }
+
+    .glassControls {
+        gap: 14px;
+        margin-bottom: 10px;
+    }
+
+    .glassPlayBtn {
+        width: 60px;
+        height: 60px;
+        font-size: 22px;
+    }
+
+    .glassIcon {
+        font-size: 20px;
+    }
+
+    .glassProgressBar {
+        height: 4px; /* Thinner on mobile */
+    }
+    
+    .glassQueue {
+        margin-top: 5px;
+        padding-top: 15px;
+    }
+    
+    .upNextLabel {
+        font-size: 0.7rem;
+        margin-bottom: 10px;
+    }
+
+    /* Mobile Queue Tweaks */
+    .queueSidebar {
+        padding: 20px;
+    }
+    
+    .queueHeader h2 {
+        font-size: 20px;
+    }
+    
+    .queueItem {
+        padding: 8px;
+        gap: 12px;
+    }
+
+    .queueItem img {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Mobile Discover List Improvements */
+    .songItem {
+        background: rgba(255, 255, 255, 0.03);
+        margin-bottom: 4px;
+        padding: 12px !important;
+        border-radius: 12px !important;
+    }
+    
+    .songItem:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: scale(1.02);
+    }
+
+    .songTitle {
+        font-size: 0.95rem;
+    }
+    
+    .songArtist {
+        font-size: 0.8rem !important;
+    }
+
+    .songCover {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 8px !important;
+    }
+}
+
+/* Side Player Card Styles (Restored and Refined) */
+.sidePlayer {
+    width: 340px; /* Reduced from 380px */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.sidePlayerCard {
+    background: rgba(10, 10, 10, 0.75); /* Darker glass "black side" */
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-radius: 24px;
+    padding: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9); /* Strong black blur shadow */
+    height: auto; /* Allow content to dictate height */
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.sidePlayerCard:hover {
+    background: #161616;
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+
+.sideCardHeader {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.sideCardCover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.sidePlayerCard:hover .sideCardCover {
+    transform: scale(1.05);
+}
+
+.sideCardBody {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sideCardInfo h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sideCardInfo p {
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin-top: 6px;
+    opacity: 0.8;
+}
+
+.sideControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 15px 0;
+}
+
+.sideIcon {
+    font-size: 20px;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sideIcon:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.sidePlayBtn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Side Player Progress Bar */
+.sideProgressContainer {
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sideProgressBar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.sideProgressFill {
+    height: 100%;
+    background: #1db954; /* Spotify Green */
+    border-radius: 2px;
+    position: relative;
+}
+
+.sideTimeRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #b3b3b3;
+    font-weight: 500;
+}
+
+/* Queue Peek Styles for Modal */
+.glassQueue {
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.upNextLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #1ed760;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.nextSongMini {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nextSongMini img {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.nextSongText {
+    display: flex;
+    flex-direction: column;
+}
+
+.nextSongText p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+}
+
+.nextSongText span {
+    font-size: 0.75rem;
+    color: #b3b3b3;
+}
+
+@media (max-width: 1200px) {
+    .sidePlayer {
+        display: none; /* Hide side player on smaller screens, rely on mini bar */
+    }
 }

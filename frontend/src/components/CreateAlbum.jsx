@@ -21,7 +21,7 @@ export default function CreateAlbum() {
     useEffect(() => {
         const fetchSongs = async () => {
             try {
-                const res = await axios.get("https://tunex-15at.onrender.com/api/songs/all", {
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/songs/all`, {
                     withCredentials: true
                 });
                 if (res.data.songs) {
@@ -95,7 +95,7 @@ export default function CreateAlbum() {
         fd.append('songs', JSON.stringify(selectedSongs));
 
         try {
-            await axios.post('https://tunex-15at.onrender.com/api/albums', fd, {
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/albums`, fd, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });

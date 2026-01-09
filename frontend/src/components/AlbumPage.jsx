@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaArrowLeft, FaPlay, FaPause, FaPlus, FaTimes, FaStepForward, FaStepBackward, FaRandom, FaHeart, FaDownload, FaEllipsisH, FaTrash } from 'react-icons/fa';
+import SwipeableSongItem from './SwipeableSongItem';
 import styles from './MiddlePage.module.css';
 
 export default function AlbumPage({
@@ -20,9 +21,13 @@ export default function AlbumPage({
     formatTime,
     isPlayerModalOpen,
     setIsPlayerModalOpen,
-    setSongs, // ⭐
-    isShuffle, // ⭐
-    setIsShuffle // ⭐
+    playbackSongs,
+    setPlaybackSongs,
+    isShuffle,
+    setIsShuffle,
+    addToQueue, // ⭐ NEW PROP
+    reorderList,
+    queue // ⭐ NEW PROP
 }) {
     const [album, setAlbum] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -30,9 +35,11 @@ export default function AlbumPage({
     const [allSongs, setAllSongs] = useState([]);
     const [isLiked, setIsLiked] = useState(false);
 
+    const [draggedIndex, setDraggedIndex] = useState(null);
+
     const fetchAlbum = () => {
         setLoading(true);
-        axios.get(`https://tunex-15at.onrender.com/api/albums/${albumId}`)
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/albums/${albumId}`)
             .then(res => {
                 setAlbum(res.data.album);
                 setLoading(false);
@@ -45,7 +52,7 @@ export default function AlbumPage({
 
     const checkLikeStatus = async () => {
         try {
-            const res = await axios.get("https://tunex-15at.onrender.com/api/user/liked-albums");
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/user/liked-albums`);
             if (res.data.success) {
                 const liked = res.data.likedAlbums.some(id => id === albumId || id._id === albumId);
                 setIsLiked(liked);
@@ -57,7 +64,7 @@ export default function AlbumPage({
 
     const toggleLike = async () => {
         try {
-            const res = await axios.post("https://tunex-15at.onrender.com/api/user/like-album", { albumId });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/user/like-album`, { albumId });
             if (res.data.success) {
                 setIsLiked(res.data.isLiked);
             }
@@ -83,28 +90,32 @@ export default function AlbumPage({
                 audio: s.audioUrl,
                 cover: s.coverUrl
             }));
-            setSongs(formattedSongs);
+            setPlaybackSongs(formattedSongs);
         }
+
+        const songData = {
+            id: song._id,
+            title: song.title,
+            artist: song.artist,
+            duration: song.duration,
+            audio: song.audioUrl,
+            cover: song.coverUrl
+        };
 
         if (currentSong?.id === song._id) {
             setIsPlaying(!isPlaying);
         } else {
-            setCurrentSong({
-                id: song._id,
-                title: song.title,
-                artist: song.artist,
-                duration: song.duration,
-                audio: song.audioUrl,
-                cover: song.coverUrl
-            });
+            setCurrentSong(songData);
             setIsPlaying(true);
         }
+        // Always ensure the parent's horizontal modal opens
+        // setIsPlayerModalOpen(true);
     };
 
     const handleDeleteAlbum = async () => {
         if (!window.confirm("Are you sure you want to delete this album?")) return;
         try {
-            const res = await axios.delete(`https://tunex-15at.onrender.com/api/albums/${albumId}`);
+            const res = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/albums/${albumId}`);
             if (res.data.ok) {
                 alert("Album deleted");
                 onBack(); // Go back to Home
@@ -117,7 +128,7 @@ export default function AlbumPage({
 
     const openAddSongModal = async () => {
         try {
-            const res = await axios.get("https://tunex-15at.onrender.com/api/songs/all");
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/songs/all`);
             if (res.data.songs) {
                 setAllSongs(res.data.songs);
                 setIsModalOpen(true);
@@ -129,7 +140,7 @@ export default function AlbumPage({
 
     const addSongToAlbum = async (songId) => {
         try {
-            await axios.post(`https://tunex-15at.onrender.com/api/albums/${albumId}/add-song`, { songId });
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/albums/${albumId}/add-song`, { songId });
             // Refresh album data
             fetchAlbum();
             setIsModalOpen(false);
@@ -199,13 +210,13 @@ export default function AlbumPage({
 
                         {/* Action Buttons Row */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '20px' }}>
-                            <FaRandom
+                            {/* <FaRandom
                                 size={20}
                                 style={{ color: isShuffle ? '#1db954' : 'var(--text-color)', opacity: isShuffle ? 1 : 0.7, cursor: 'pointer' }}
                                 title="Shuffle"
                                 onClick={() => setIsShuffle(!isShuffle)}
-                            />
-                            <div
+                            /> */}
+                            {/* <div
                                 onClick={toggleLike}
                                 style={{
                                     backgroundColor: isLiked ? '#1ed760' : 'transparent',
@@ -220,10 +231,10 @@ export default function AlbumPage({
                                 }}
                             >
                                 <FaHeart size={20} color={isLiked ? "black" : "var(--text-color)"} />
-                            </div>
-                            <div style={{ border: '2px solid #888', borderRadius: '50%', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                            </div> */}
+                            {/* <div style={{ border: '2px solid #888', borderRadius: '50%', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                                 <FaDownload size={16} style={{ color: 'var(--text-color)' }} />
-                            </div>
+                            </div> */}
                             {/* Delete Option */}
                             <FaTrash
                                 size={20}
@@ -235,11 +246,29 @@ export default function AlbumPage({
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {album.songs.map((song, index) => (
-                        <div
+                        <SwipeableSongItem
                             key={song._id}
                             onClick={() => handleSongClick(song)}
+                            onQueue={() => addToQueue({ ...song, id: song._id, cover: song.coverUrl, audio: song.audioUrl })}
+                            onDragStart={(e) => {
+                                e.dataTransfer.setData("text/plain", index);
+                                setDraggedIndex(index);
+                            }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+                                const toIndex = index;
+                                if (reorderList && album) {
+                                    const newSongs = reorderList(album.songs, fromIndex, toIndex);
+                                    setAlbum({ ...album, songs: newSongs });
+                                }
+                                setDraggedIndex(null);
+                            }}
+                            onDragEnd={() => setDraggedIndex(null)}
+                            className={draggedIndex === index ? styles.dragging : ""}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -248,7 +277,8 @@ export default function AlbumPage({
                                 borderRadius: '8px',
                                 backgroundColor: currentSong?.id === song._id ? 'rgba(128, 128, 128, 0.2)' : 'transparent',
                                 cursor: 'pointer',
-                                transition: 'background 0.2s'
+                                transition: 'background 0.2s',
+                                width: '100%'
                             }}
                             onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(128, 128, 128, 0.2)'}
                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = currentSong?.id === song._id ? 'rgba(128, 128, 128, 0.2)' : 'transparent'}
@@ -260,83 +290,25 @@ export default function AlbumPage({
                                 <p style={{ margin: 0, fontWeight: '500', color: currentSong?.id === song._id ? '#1db954' : 'var(--text-color)' }}>{song.title}</p>
                                 <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.6 }}>{song.artist}</p>
                             </div>
+                            {/* ⭐ NEW: Add to Queue Icon */}
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToQueue({ ...song, id: song._id, cover: song.coverUrl, audio: song.audioUrl });
+                                }}
+                                title="Add to Queue"
+                                style={{ padding: '8px', cursor: 'pointer', opacity: 0.7 }}
+                                onMouseOver={(e) => e.currentTarget.style.opacity = 1}
+                                onMouseOut={(e) => e.currentTarget.style.opacity = 0.7}
+                            >
+                                <FaPlus size={14} />
+                            </div>
                             <span style={{ opacity: 0.6, fontSize: '0.9rem' }}>{song.duration}</span>
-                        </div>
+                        </SwipeableSongItem>
                     ))}
                 </div>
             </div>
 
-            {/* Player Card */}
-            {currentSong && (
-                <>
-                    {/* Modal Player (Overlay) */}
-                    {isPlayerModalOpen && (
-                        <div className={styles.playerModal} onClick={() => setIsPlayerModalOpen(false)}>
-                            <div className={styles.playerModalContent} onClick={(e) => e.stopPropagation()}>
-                                <img src={currentSong.cover} alt={currentSong.title} className={styles.modalCover} />
-                                <div className={styles.modalInfo}>
-                                    <h2 className={styles.modalTitle}>{currentSong.title}</h2>
-                                    <p className={styles.modalArtist}>{currentSong.artist}</p>
-                                </div>
-                                <div className={styles.modalControls}>
-                                    <FaStepBackward className={styles.modalControlIcon} onClick={playPreviousSong} />
-                                    <div className={styles.modalPlayBtn} onClick={togglePlayPause}>
-                                        {isPlaying ? <FaPause /> : <FaPlay />}
-                                    </div>
-                                    <FaStepForward className={styles.modalControlIcon} onClick={playNextSong} />
-                                </div>
-                                <div className={styles.modalProgressContainer}>
-                                    <span className={styles.timeText}>{formatTime(currentTime)}</span>
-                                    <div
-                                        className={styles.progressBar}
-                                        onClick={handleProgressBarClick}
-                                    >
-                                        <div
-                                            className={styles.progressFill}
-                                            style={{ width: `${progress}%` }}
-                                        ></div>
-                                    </div>
-                                    <span className={styles.timeText}>{formatTime(duration)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Small Player Card */}
-                    <div
-                        className={styles.playerContainer}
-                        onClick={() => setIsPlayerModalOpen(true)}
-                    >
-                        <div className={styles.playerCard}>
-                            <img src={currentSong.cover} className={styles.largeCover} />
-
-                            <div className={styles.playerInfo}>
-                                <h3>{currentSong.title}</h3>
-                                <p>{currentSong.artist}</p>
-                            </div>
-
-                            <div className={styles.controls} onClick={(e) => e.stopPropagation()}>
-                                <FaStepBackward className={styles.controlIcon} onClick={playPreviousSong} />
-                                <div className={styles.playBtn} onClick={togglePlayPause}>
-                                    {isPlaying ? <FaPause /> : <FaPlay />}
-                                </div>
-                                <FaStepForward className={styles.controlIcon} onClick={playNextSong} />
-                            </div>
-
-                            <div
-                                className={styles.progressContainer}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <span className={styles.timeText}>{formatTime(currentTime)}</span>
-                                <div className={styles.progressBar} onClick={handleProgressBarClick}>
-                                    <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-                                </div>
-                                <span className={styles.timeText}>{formatTime(duration)}</span>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )}
 
             {/* Add Songs Modal */}
             {isModalOpen && (

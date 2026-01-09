@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export default function AlbumsList() {
     const [albums, setAlbums] = useState([]);
     useEffect(() => {
-        axios.get('https://tunex-15at.onrender.com/api/albums')
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/albums`)
             .then(res => setAlbums(res.data.albums))
             .catch(console.error);
     }, []);

@@ -14,7 +14,6 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",              // dev
       "https://tunex-x65w.onrender.com"      // production frontend
     ],
     credentials: true

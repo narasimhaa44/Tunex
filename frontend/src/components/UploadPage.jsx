@@ -109,7 +109,7 @@ const UploadPage = ({ setSongs, songs }) => {
         fd.append("duration", formData.duration);
 
         try {
-            const res = await axios.post("https://tunex-15at.onrender.com/api/songs/upload", fd, {
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/songs/upload`, fd, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
                 onUploadProgress: (prog) => {

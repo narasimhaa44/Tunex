@@ -1,27 +1,16 @@
 import styles from "./MusicPlayer.module.css";
-import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaTimes } from "react-icons/fa";
+import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom } from "react-icons/fa";
+import { MdQueueMusic } from "react-icons/md";
 import { useState } from "react";
 
-const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, songs, progress, currentTime, duration, audioRef }) => {
+const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, songs, progress, currentTime, duration, audioRef, playNextSong, playPreviousSong, isShuffle, setIsShuffle, queue, setQueue, showQueue, setShowQueue }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
     };
 
-    const playNextSong = () => {
-        const currentIndex = songs.findIndex(song => song.id === currentSong.id);
-        const nextIndex = (currentIndex + 1) % songs.length;
-        setCurrentSong(songs[nextIndex]);
-        setIsPlaying(true);
-    };
 
-    const playPreviousSong = () => {
-        const currentIndex = songs.findIndex(song => song.id === currentSong.id);
-        const prevIndex = (currentIndex - 1 + songs.length) % songs.length;
-        setCurrentSong(songs[prevIndex]);
-        setIsPlaying(true);
-    };
 
     const handleProgressBarClick = (e) => {
         const progressBar = e.currentTarget;
@@ -58,19 +47,27 @@ const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, son
                             <p className={styles.modalArtist}>{currentSong.artist}</p>
                         </div>
                         <div className={styles.modalControls}>
+                            <FaRandom
+                                className={`${styles.modalControlIcon} ${isShuffle ? styles.active : ""}`}
+                                onClick={(e) => { e.stopPropagation(); setIsShuffle(!isShuffle); }}
+                            />
                             <FaStepBackward className={styles.modalControlIcon} onClick={playPreviousSong} />
                             <div className={styles.modalPlayBtn} onClick={togglePlayPause}>
                                 {isPlaying ? <FaPause /> : <FaPlay />}
                             </div>
                             <FaStepForward className={styles.modalControlIcon} onClick={playNextSong} />
+                            <MdQueueMusic
+                                className={`${styles.modalControlIcon} ${showQueue ? styles.active : ""}`}
+                                onClick={(e) => { e.stopPropagation(); setShowQueue(!showQueue); }}
+                            />
                         </div>
                         <div className={styles.modalProgressContainer}>
                             <span className={styles.timeText}>{formatTime(currentTime)}</span>
-                            <div 
+                            <div
                                 className={styles.progressBar}
                                 onClick={handleProgressBarClick}
                             >
-                                <div 
+                                <div
                                     className={styles.progressFill}
                                     style={{ width: `${progress}%` }}
                                 ></div>
@@ -81,31 +78,43 @@ const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, son
                 </div>
             )}
 
-            {/* Footer Player Bar */}
-            <div className={styles.playerBar} onClick={() => setIsModalOpen(true)}>
-                <div className={styles.songInfo}>
+            {/* Footer Player Bar (Spotify Style) */}
+            <div className={styles.playerBar}>
+                <div className={styles.songInfo} onClick={() => setIsModalOpen(true)}>
                     <img src={currentSong.cover} alt={currentSong.title} className={styles.coverArt} />
                     <div className={styles.textInfo}>
                         <p className={styles.title}>{currentSong.title}</p>
-                        <p className={styles.artist}>{currentSong.artist}</p>
+                        <p className={styles.artist}>
+                            {currentSong.artist} {currentSong.album ? `• ${currentSong.album}` : ""}
+                        </p>
                     </div>
                 </div>
 
-                <div className={styles.playerControls} onClick={(e) => e.stopPropagation()}>
+                <div className={styles.playerControls}>
                     <div className={styles.controls}>
-                        <FaStepBackward className={styles.controlIcon} onClick={playPreviousSong} />
-                        <div className={styles.playBtn} onClick={togglePlayPause}>
+                        <FaRandom
+                            className={`${styles.controlIcon} ${isShuffle ? styles.active : ""}`}
+                            onClick={(e) => { e.stopPropagation(); setIsShuffle(!isShuffle); }}
+                            title="Shuffle"
+                        />
+                        <FaStepBackward className={styles.controlIcon} onClick={(e) => { e.stopPropagation(); playPreviousSong(); }} />
+                        <div className={styles.playBtn} onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); }}>
                             {isPlaying ? <FaPause /> : <FaPlay />}
                         </div>
-                        <FaStepForward className={styles.controlIcon} onClick={playNextSong} />
+                        <FaStepForward className={styles.controlIcon} onClick={(e) => { e.stopPropagation(); playNextSong(); }} />
+                        <MdQueueMusic
+                            className={`${styles.controlIcon} ${showQueue ? styles.active : ""}`}
+                            onClick={(e) => { e.stopPropagation(); setShowQueue(!showQueue); }}
+                            title="Queue"
+                        />
                     </div>
-                    <div className={styles.progressContainer}>
+                    <div className={styles.progressContainer} onClick={(e) => e.stopPropagation()}>
                         <span className={styles.timeText}>{formatTime(currentTime)}</span>
-                        <div 
+                        <div
                             className={styles.progressBar}
                             onClick={handleProgressBarClick}
                         >
-                            <div 
+                            <div
                                 className={styles.progressFill}
                                 style={{ width: `${progress}%` }}
                             ></div>

@@ -12,24 +12,44 @@ axios.defaults.withCredentials = true;
 const Home = () => {
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [activePage, setActivePage] = useState("Home");
+    const [activePage, setActivePage] = useState("Home"); // Centralized active page state
     const [progress, setProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(null);
 
-    const [songs, setSongs] = useState([]);
+    const [allSongs, setAllSongs] = useState([]); // ⭐ GLOBAL COLLECTION
+    const [playbackSongs, setPlaybackSongs] = useState([]); // ⭐ ACTIVE CONTEXT (Album, Playlist, etc.)
     const [albums, setAlbums] = useState([]);
 
+    const [isShuffle, setIsShuffle] = useState(false); // Lifted from MiddlePage
+    const [queue, setQueue] = useState([]); // Lifted from MiddlePage
+    const [showQueue, setShowQueue] = useState(false); // ⭐ NEW: Lifted for global sync
+    const [isOnline, setIsOnline] = useState(navigator.onLine); // ⭐ NEW: Offline Detection
+
     const [searchQuery, setSearchQuery] = useState("");
+
+    // Monitor Online/Offline Status
+    useEffect(() => {
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+
+        window.addEventListener("online", handleOnline);
+        window.addEventListener("offline", handleOffline);
+
+        return () => {
+            window.removeEventListener("online", handleOnline);
+            window.removeEventListener("offline", handleOffline);
+        };
+    }, []);
 
     // Fetch songs FROM BACKEND
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [songsRes, albumsRes] = await Promise.all([
-                    axios.get("https://tunex-15at.onrender.com/api/songs/all"),
-                    axios.get("https://tunex-15at.onrender.com/api/albums")
+                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/songs/all`),
+                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/albums`)
                 ]);
 
                 console.log("Fetched songs:", songsRes.data.songs);
@@ -43,12 +63,14 @@ const Home = () => {
                         artist: s.artist,
                         duration: s.duration,
                         cover: s.coverUrl,
-                        audio: s.audioUrl
+                        audio: s.audioUrl,
+                        album: s.album // Added album/movie info
                     }));
 
 
 
-                    setSongs(prev => [...prev, ...formatted]);
+                    setAllSongs(formatted);
+                    setPlaybackSongs(formatted); // Default to all songs
                 }
 
                 if (albumsRes.data.albums) {
@@ -93,11 +115,42 @@ const Home = () => {
         };
     }, [currentSong]);
 
-    // Next song
+    // Next song logic with Queue and Shuffle
     const playNextSong = () => {
-        const index = songs.findIndex((s) => s.id === currentSong.id);
-        const next = (index + 1) % songs.length;
-        setCurrentSong(songs[next]);
+        if (!currentSong) return;
+
+        // 1. Check Queue first
+        if (queue.length > 0) {
+            const nextSong = queue[0];
+            setQueue(prev => prev.slice(1));
+            setCurrentSong(nextSong);
+            setIsPlaying(true);
+            return;
+        }
+
+        // 2. Linear or Shuffle from playbackSongs
+        if (playbackSongs.length === 0) return;
+
+        let nextSong;
+        if (isShuffle) {
+            const randomIndex = Math.floor(Math.random() * playbackSongs.length);
+            nextSong = playbackSongs[randomIndex];
+        } else {
+            const currentIndex = playbackSongs.findIndex((s) => s.id === currentSong.id);
+            const nextIndex = (currentIndex + 1) % playbackSongs.length;
+            nextSong = playbackSongs[nextIndex];
+        }
+
+        setCurrentSong(nextSong);
+        setIsPlaying(true);
+    };
+
+    const playPreviousSong = () => {
+        if (!currentSong || playbackSongs.length === 0) return;
+
+        const currentIndex = playbackSongs.findIndex((s) => s.id === currentSong.id);
+        const prevIndex = (currentIndex - 1 + playbackSongs.length) % playbackSongs.length;
+        setCurrentSong(playbackSongs[prevIndex]);
         setIsPlaying(true);
     };
 
@@ -110,11 +163,22 @@ const Home = () => {
                 setCurrentSong={setCurrentSong}
                 isPlaying={isPlaying}
                 setIsPlaying={setIsPlaying}
-                songs={songs}
-                setSongs={setSongs}
+                allSongs={allSongs}
+                setAllSongs={setAllSongs}
+                playbackSongs={playbackSongs}
+                setPlaybackSongs={setPlaybackSongs}
                 albums={albums}
-                setActivePage={setActivePage}
-                activePage={activePage}
+                active={activePage}
+                setActive={setActivePage}
+                isShuffle={isShuffle}
+                setIsShuffle={setIsShuffle}
+                queue={queue}
+                setQueue={setQueue}
+                showQueue={showQueue}
+                setShowQueue={setShowQueue}
+                isOnline={isOnline} // ⭐ PASS DOWN
+                playNextSong={playNextSong} // ⭐ PASS DOWN
+                playPreviousSong={playPreviousSong} // ⭐ PASS DOWN
                 progress={progress}
                 currentTime={currentTime}
                 duration={duration}
@@ -122,18 +186,26 @@ const Home = () => {
                 searchQuery={searchQuery}
             />
 
-            {/* Music player bar only in non-list pages */}
-            {activePage !== "Library" && activePage !== "Home" && currentSong && (
+            {/* Global Music Player Bar (Visible ONLY on Home) */}
+            {currentSong && activePage === "Home" && (
                 <MusicPlayer
                     currentSong={currentSong}
                     setCurrentSong={setCurrentSong}
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}
-                    songs={songs}
+                    songs={playbackSongs}
+                    playNextSong={playNextSong}
+                    playPreviousSong={playPreviousSong}
                     progress={progress}
                     currentTime={currentTime}
                     duration={duration}
                     audioRef={audioRef}
+                    isShuffle={isShuffle}
+                    setIsShuffle={setIsShuffle}
+                    queue={queue}
+                    setQueue={setQueue}
+                    showQueue={showQueue}
+                    setShowQueue={setShowQueue}
                 />
             )}
 
