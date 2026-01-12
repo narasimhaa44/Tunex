@@ -27,12 +27,12 @@ app.use((req, res, next) => {
 
 app.use(cors({
     origin: [
+      "https://tunex-x65w.onrender.com",
       "http://localhost:5173",
       "http://localhost",
       "http://10.0.2.2",
       "http://192.168.1.22:5173",
-      "capacitor://localhost",
-      "https://tunex-x65w.onrender.com"
+      "capacitor://localhost"
     ],
     credentials: true,
 }));
