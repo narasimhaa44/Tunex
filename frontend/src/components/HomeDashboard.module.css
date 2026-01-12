@@ -1,0 +1,460 @@
+/* Main Container */
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-bottom: 40px;
+    color: var(--text-color, #fff);
+    font-family: inherit;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Section Titles */
+.sectionTitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #fff;
+    padding-left: 5px;
+}
+
+/* Artist Circles */
+.artistSection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.artistRow {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 10px 5px;
+    scrollbar-width: none; /* Firefox */
+    mask-image: linear-gradient(to right, black 95%, transparent 100%);
+}
+
+.artistRow::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.artistCircle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    min-width: 100px;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.artistCircle:hover {
+    transform: scale(1.08);
+}
+
+.artistCircle.active {
+    transform: scale(1.1);
+}
+
+.artistImageWrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.artistCircle:hover .artistImageWrapper {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+}
+
+.artistCircle.active .artistImageWrapper {
+    border-color: #ffffff; /* Active white color */
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.artistImageWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.artistCircle:hover .artistImageWrapper img {
+    transform: scale(1.1);
+}
+
+.artistName {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    color: #b3b3b3;
+    transition: color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+}
+
+.artistCircle:hover .artistName,
+.artistCircle.active .artistName {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Artist Spotlight */
+.spotlightSection {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    margin-top: 10px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    animation: slideUp 0.5s ease-out;
+}
+
+.spotlightImage {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transform: rotate(-3deg);
+    transition: transform 0.3s ease;
+}
+
+.spotlightSection:hover .spotlightImage {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.spotlightInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.spotlightHeader h2 {
+    font-size: 42px;
+    margin: 0;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+.spotlightStats {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    color: #a0a0a0;
+    align-items: center;
+}
+
+.spotlightActions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.playArtistBtn {
+    background: #1db954;
+    color: #000;
+    border: none;
+    padding: 14px 34px;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.playArtistBtn:hover {
+    transform: scale(1.05);
+    background: #1ed760;
+    box-shadow: 0 8px 15px rgba(29, 185, 84, 0.3);
+}
+
+.playArtistBtn:active {
+    transform: scale(0.98);
+}
+
+.followBtn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 14px 34px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+.followBtn:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Album Grid */
+.albumGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 24px;
+}
+
+.albumCard {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.albumCard:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+.albumCoverWrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.albumCoverWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.albumCard:hover .albumCoverWrapper img {
+    transform: scale(1.08) rotate(2deg);
+}
+
+.albumCard h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Quick Access Grid */
+.quickAccessGrid {
+    /* visible globally now */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.4s ease;
+}
+
+.quickCard {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column; /* Stack vertically for smaller cards */
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.quickCard:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cardIconWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.cardText h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #fff;
+}
+
+.cardText span {
+    font-size: 11px;
+    color: #aaa;
+}
+
+/* Song List Styles (Artist Profile) */
+.songCard {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    color: #fff;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.songCard:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.songCard.active {
+    background-color: rgba(29, 185, 84, 0.1); /* Spotify Green tint */
+}
+
+.songNumber {
+    width: 25px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.songCover {
+    width: 42px; /* Small normal size */
+    height: 42px;
+    border-radius: 4px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.songInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.songTitle {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.songArtist {
+    font-size: 12px;
+    margin: 0;
+    color: #b3b3b3;
+}
+
+.songDuration {
+    color: #888;
+    font-size: 13px;
+    margin-left: 10px;
+}
+
+/* Enhanced Spotlight for Mobile matching screenshot */
+@media (max-width: 768px) {
+    .quickAccessGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .spotlightSection {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+        gap: 20px;
+        background: linear-gradient(180deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,0.8) 100%);
+    }
+    
+    .spotlightImage {
+        width: 160px;
+        height: 160px;
+        border-radius: 16px; /* Slightly squarish as per image */
+        margin-bottom: 5px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    
+    .spotlightHeader h2 {
+        font-size: 32px;
+        margin-bottom: 5px;
+    }
+    
+    .spotlightStats {
+        justify-content: center;
+        font-size: 13px;
+        opacity: 0.8;
+    }
+
+    .spotlightActions {
+        width: 100%;
+        justify-content: center;
+        gap: 15px; /* Slightly smaller gap */
+        display: flex;
+    }
+
+    .playArtistBtn, .followBtn {
+        width: auto; /* Allow flexible width */
+        flex: 1; /* Distribute space equally */
+        max-width: 160px; /* Prevent too wide */
+        justify-content: center;
+        padding: 12px 0;
+        min-width: 100px; /* Ensure not too small */
+    }
+
+    .albumGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    
+    .albumCard {
+        padding: 12px;
+    }
+}
+
+/* Extra small devices (phones, 480px and down) */
+@media (max-width: 480px) {
+    .albumGrid {
+        grid-template-columns: 1fr; /* Single column for very small screens */
+    }
+}

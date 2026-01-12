@@ -22,19 +22,8 @@ app.use((req, res, next) => {
 });
 
 // Middleware
-const allowedOrigins = [
-  "http://localhost:5173",     // Vite dev (website)
-  "http://localhost:3000",     // optional
-  "capacitor://localhost",     // Android Capacitor
-  "http://localhost",          // fallback
-];
-
-// app.use(
-//   cors({
-//     origin:true,
-//     credentials: true,
-//   })
-// );
+// Middleware
+// (CORS configured below)
 
 app.use(
   cors({

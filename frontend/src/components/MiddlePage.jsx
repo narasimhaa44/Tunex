@@ -8,6 +8,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UploadPage from "./UploadPage";
 import AlbumPage from "./AlbumPage";
+import HomeDashboard from "./HomeDashboard";
+import MoodAnalyser from "./MoodAnalyser"; // Placeholder
+import ArtistProfile from "./ArtistProfile"; // New component
+import Player from "./Player"; // New Floating component
 import { cacheSongAssets } from "../utils/offlineUtils";
 
 const MiddlePage = ({
@@ -41,11 +45,13 @@ const MiddlePage = ({
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
+    const [selectedArtistForProfile, setSelectedArtistForProfile] = useState(null); // New state
     const [likedSongs, setLikedSongs] = useState([]);
     const [playlists, setPlaylists] = useState([]);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState("");
+    const [volume, setVolume] = useState(1); // Default max volume
     const [notification, setNotification] = useState(null);
     const navigate = useNavigate();
 
@@ -553,23 +559,39 @@ const MiddlePage = ({
                             />
                         )}
 
+
                         {active === "Home" && (
-                            <div className={styles.libraryContent}>
-                                <div className={styles.songListContainer}>
-                                    <h2 className={styles.sectionTitle}>Your Albums</h2>
-                                    <div className={styles.albumGrid}>
-                                        {albums.map(album => (
-                                            <div key={album._id} className={styles.albumCard} onClick={() => handleAlbumClick(album._id)}>
-                                                <div className={styles.albumCoverWrapper}>
-                                                    <img src={album.coverUrl} alt={album.title} />
-                                                </div>
-                                                <h4>{album.title}</h4>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                            <HomeDashboard
+                                albums={albums}
+                                onAlbumClick={handleAlbumClick}
+                                setActive={setActive}
+                                onPlayArtist={(artist) => {
+                                    setSelectedArtistForProfile(artist);
+                                    setActive("ArtistProfile");
+                                }}
+                            />
                         )}
+
+                        {active === "ArtistProfile" && selectedArtistForProfile && (
+                            <ArtistProfile
+                                artist={selectedArtistForProfile}
+                                songs={allSongs}
+                                albums={albums} // Pass albums
+                                onAlbumClick={handleAlbumClick} // Pass click handler
+                                onQueue={(song) => setQueue(prev => [...prev, song])} // Pass queue handler
+                                currentSong={currentSong}
+                                onSongClick={(song) => {
+                                    setPlaybackSongs(allSongs.filter(s =>
+                                        s.artist.toLowerCase().includes(selectedArtistForProfile.name.toLowerCase()) ||
+                                        (s.artists && s.artists.includes(selectedArtistForProfile.name))
+                                    ));
+                                    handleSongClick(song);
+                                }}
+                                onBack={() => setActive("Home")}
+                            />
+                        )}
+
+                        {active === "Mood Analyser" && <MoodAnalyser />}
 
                         {active === "Discover" && (
                             <SongListSection
@@ -639,48 +661,30 @@ const MiddlePage = ({
                         </div>
                     )}
 
-                    {/* Mini Player Bar and Expanded Glass Modal */}
-                    {currentSong && (active === "Discover" || active === "AlbumView" || active === "PlaylistView" || active === "Liked Songs" || active === "Upload") && (
-                        <>
-                            {/* Mini Player Bar at Bottom */}
-                            <div className={styles.miniPlayerBar} onClick={() => setIsPlayerModalOpen(true)}>
-                                <div className={styles.miniInfo}>
-                                    <img src={currentSong.cover} alt={currentSong.title} className={styles.miniCover} />
-                                    <div className={styles.miniText}>
-                                        <h4>{currentSong.title}</h4>
-                                        <p>{currentSong.artist}</p>
-                                    </div>
-                                </div>
-
-                                <div className={styles.miniControls}>
-                                    <FaRandom
-                                        className={`${styles.miniIcon} ${isShuffle ? styles.activeIcon : ""}`}
-                                        onClick={(e) => { e.stopPropagation(); setIsShuffle(!isShuffle); }}
-                                    />
-                                    <FaStepBackward className={styles.miniIcon} onClick={(e) => { e.stopPropagation(); playPreviousSong(); }} />
-                                    <div className={styles.miniPlayBtn} onClick={(e) => { e.stopPropagation(); togglePlayPause(); }}>
-                                        {isPlaying ? <FaPause /> : <FaPlay />}
-                                    </div>
-                                    <FaStepForward className={styles.miniIcon} onClick={(e) => { e.stopPropagation(); playNextSong(); }} />
-                                    <MdQueueMusic
-                                        className={`${styles.miniIcon} ${showQueue ? styles.activeIcon : ""}`}
-                                        onClick={(e) => { e.stopPropagation(); setShowQueue(!showQueue); }}
-                                    />
-                                </div>
-
-                                <div className={styles.miniProgressRow}>
-                                    <span className={styles.miniTime}>{formatTime(currentTime)}</span>
-                                    <div className={styles.miniProgressBar} onClick={handleProgressBarClick}>
-                                        <div
-                                            className={styles.miniProgressFill}
-                                            style={{ width: `${progress}%` }}
-                                        ></div>
-                                    </div>
-                                    <span className={styles.miniTime}>{formatTime(duration)}</span>
-                                </div>
-                            </div>
-
-                        </>
+                    {/* Global Floating Player (Restricted to Artist Profile) */}
+                    {currentSong && (active === "ArtistProfile" || active === "AlbumView" || active === "PlaylistView" || active === "Liked Songs" || active === "Discover") && (
+                        <Player
+                            song={{
+                                ...currentSong,
+                                audioUrl: currentSong.audio || currentSong.audioUrl, // Handle data variations
+                                coverUrl: currentSong.cover || currentSong.coverUrl
+                            }}
+                            isPlaying={isPlaying}
+                            onPlayPause={togglePlayPause}
+                            onNext={playNextSong}
+                            onPrev={playPreviousSong}
+                            onSeek={handleProgressBarClick} // Note: Player expects time, but here we might need to adjust. 
+                            // Actually, Player.jsx uses onSeek(time). handleProgressBarClick in MiddlePage might be expecting an event.
+                            // Let's check handleProgressBarClick implementation later if needed. 
+                            // For now, let's pass the raw values.
+                            currentTime={currentTime}
+                            duration={duration}
+                            isShuffle={isShuffle}
+                            setIsShuffle={setIsShuffle}
+                            onQueue={() => setShowQueue(!showQueue)}
+                            volume={volume}
+                            onVolumeChange={setVolume}
+                        />
                     )}
                 </div>
             </div>
