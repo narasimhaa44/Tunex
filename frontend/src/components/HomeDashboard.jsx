@@ -44,8 +44,15 @@ const ARTISTS = [
         id: 6,
         name: "Sinjith Yerramilli",
         image: "/img/Sinjith-Yerramilli.jpg",
+        stats: "Monthly Listeners: 1M",
+        bio: "The melody Composer."
+    },
+    {
+        id: 7,
+        name: "Devi Sri Prasad",
+        image: "/img/Devisri.jpg",
         stats: "Monthly Listeners: 20M",
-        bio: "The melody queen."
+        bio: "The melody and mass composer."
     }
 ];
 
