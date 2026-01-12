@@ -4,24 +4,59 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
+const https = require('https');
+const fs = require('fs');
 const authRoutes = require('./routes/auth');
 const songRoutes = require('./routes/songs');
 
 const app = express();
 
+const options = {
+  key: fs.readFileSync("./localhost+2-key.pem"),
+  cert: fs.readFileSync("./localhost+2.pem"),
+};
+// Request Logger
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 // Middleware
+const allowedOrigins = [
+  "http://localhost:5173",     // Vite dev (website)
+  "http://localhost:3000",     // optional
+  "capacitor://localhost",     // Android Capacitor
+  "http://localhost",          // fallback
+];
+
+// app.use(
+//   cors({
+//     origin:true,
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
     origin: [
-      "https://tunex-x65w.onrender.com"      // production frontend
+      "http://localhost:5173",
+      "http://localhost",
+      "http://10.0.2.2",
+      "http://192.168.1.22:5173",
+      "capacitor://localhost",
+      "https://tunex-x65w.onrender.com"
     ],
-    credentials: true
+    credentials: true,
   })
 );
 
+
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  console.log("🔥 HIT:", req.method, req.url);
+  next();
+});
 
 app.use("/uploads", express.static(require('path').join(__dirname, "uploads")));
 app.use("/api/songs", songRoutes);
@@ -47,6 +82,15 @@ const MONGO = process.env.MONGO_URI || 'mongodb://localhost:27017/tunexauth';
 
 mongoose.connect(MONGO)
   .then(() => {
-    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+    app.listen(PORT,"0.0.0.0", () => console.log(`Server running on http://0.0.0.0:${PORT}`));
   })
   .catch(err => console.error('DB connect error', err));
+
+// mongoose.connect(MONGO)
+//   .then(() => {
+//     https.createServer(options, app).listen(PORT, "0.0.0.0", () => {
+//       console.log(`✅ HTTPS Server running at https://localhost:${PORT}`);
+//       console.log(`✅ HTTPS Server running at https://10.0.2.2:${PORT}`);
+//     });
+//   })
+//   .catch(err => console.error("DB connect error", err));

@@ -76,3 +76,24 @@ exports.getPlaylist = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Remove a song from a playlist
+exports.removeSongFromPlaylist = async (req, res) => {
+  try {
+    const { playlistId, songId } = req.body;
+    const userId = req.user.userId;
+
+    const playlist = await Playlist.findOne({ _id: playlistId, owner: userId });
+
+    if (!playlist) {
+      return res.status(404).json({ success: false, message: 'Playlist not found' });
+    }
+
+    playlist.songs = playlist.songs.filter(id => id.toString() !== songId);
+    await playlist.save();
+
+    res.status(200).json({ success: true, playlist });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

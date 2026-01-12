@@ -7,13 +7,25 @@ import { useAuth } from "./AuthContext";
 
 axios.defaults.withCredentials = true;
 
+import Loading from "./Loading";
+
+// ... existing imports
+
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [theme, setTheme] = useState("dark");
+    const [isLoading, setIsLoading] = useState(false); // Local loading state
     const navigate = useNavigate();
     const { setUser } = useAuth(); // Destructure setUser
+
+    // Redirect if already logged in
+    useState(() => {
+        if (localStorage.getItem("token")) {
+            navigate("/home", { replace: true });
+        }
+    }, []);
 
     const toggleTheme = () => {
         setTheme(theme === "dark" ? "light" : "dark");
@@ -22,6 +34,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setIsLoading(true); // Start loading
 
         try {
             const res = await axios.post(
@@ -31,15 +44,26 @@ const Login = () => {
             );
 
             setUser(res.data.user); // Update context
-            navigate("/home");
+            localStorage.setItem("token", res.data.accessToken);
+            console.log("TOKEN SAVED:", res.data.accessToken);
+
+            // Short delay to show animation (optional, but good for UX)
+            setTimeout(() => {
+                setIsLoading(false);
+                navigate("/home", { replace: true });
+            }, 500);
+
         } catch (err) {
-            console.log(err);
-            setError(err.response?.data?.error || "Login failed");
+            console.error("Login Error Details:", err);
+            const errorMessage = err.response?.data?.error || err.message || "Login failed";
+            setError(errorMessage);
+            setIsLoading(false); // Stop loading on error
         }
     };
 
     return (
         <div className={`${styles.container} ${theme === "dark" ? styles.dark : styles.light}`}>
+            {isLoading && <Loading />} {/* Show full screen loader */}
             <div className={styles.content}>
                 <button onClick={toggleTheme} className={styles.themeToggle}>
                     {theme === "dark" ? <MdSunny /> : <MdDarkMode />}

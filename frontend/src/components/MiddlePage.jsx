@@ -3,7 +3,7 @@ import styles from "./MiddlePage.module.css";
 import { GoHomeFill } from "react-icons/go";
 import { FaFire, FaCompass, FaCog, FaBars, FaPlay, FaPause, FaStepForward, FaStepBackward, FaCloudUploadAlt, FaHeart, FaPlus, FaEllipsisV, FaRandom } from "react-icons/fa";
 import { MdLibraryMusic, MdEvent, MdAlbum, MdPlaylistPlay, MdQueueMusic } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UploadPage from "./UploadPage";
@@ -215,10 +215,28 @@ const MiddlePage = ({
             const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/playlists/add-song`, { playlistId, songId });
             if (res.data.success) {
                 showNotification("Added to playlist!");
+                // Update local state if needed
             }
         } catch (error) {
             console.error("Error adding to playlist:", error);
-            alert(error.response?.data?.message || "Error adding to playlist");
+            showNotification(error.response?.data?.message || "Error adding to playlist");
+        }
+    };
+
+    const removeFromPlaylist = async (songId) => {
+        if (!selectedPlaylist) return;
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/playlists/remove-song`, { playlistId: selectedPlaylist._id, songId });
+            if (res.data.success) {
+                const newSongs = selectedPlaylist.songs.filter(s => (s.id || s._id) !== songId);
+                const updatedPlaylist = { ...selectedPlaylist, songs: newSongs };
+                setSelectedPlaylist(updatedPlaylist);
+                setPlaylists(prev => prev.map(p => p._id === selectedPlaylist._id ? updatedPlaylist : p));
+                showNotification("Removed from playlist");
+            }
+        } catch (error) {
+            console.error("Error removing from playlist:", error);
+            showNotification("Error removing song");
         }
     };
 
@@ -505,6 +523,7 @@ const MiddlePage = ({
                                 addToPlaylist={addToPlaylist}
                                 setShowPlaylistModal={setShowPlaylistModal}
                                 addToQueue={addToQueue}
+                                removeFromPlaylist={removeFromPlaylist}
                                 onSongsReorder={(from, to) => {
                                     const newSongs = reorderList(selectedPlaylist.songs, from, to);
                                     setSelectedPlaylist({ ...selectedPlaylist, songs: newSongs });
@@ -739,15 +758,37 @@ const SongListSection = ({
     addToPlaylist,
     setShowPlaylistModal,
     addToQueue,
+    removeFromPlaylist,
     onSongsReorder
 }) => {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [subMenuOpenId, setSubMenuOpenId] = useState(null);
+    const subMenuTimer = useRef(null);
 
     const toggleMenu = (e, id) => {
         e.stopPropagation();
         setOpenMenuId(openMenuId === id ? null : id);
         setSubMenuOpenId(null);
+    };
+
+    const handleSubMenuEnter = (id) => {
+        if (subMenuTimer.current) clearTimeout(subMenuTimer.current);
+        setSubMenuOpenId(id);
+    };
+
+    const handleSubMenuLeave = () => {
+        subMenuTimer.current = setTimeout(() => {
+            setSubMenuOpenId(null);
+        }, 300);
+    };
+
+    const toggleSubMenuClick = (e, id) => {
+        e.stopPropagation();
+        if (subMenuOpenId === id) {
+            setSubMenuOpenId(null);
+        } else {
+            setSubMenuOpenId(id);
+        }
     };
 
     return (
@@ -759,6 +800,7 @@ const SongListSection = ({
                         <SwipeableSongItem
                             key={song.id}
                             className={`${styles.songItem} ${currentSong?.id === song.id ? styles.playing : ""} ${draggedIndex === index ? styles.dragging : ""}`}
+                            style={{ zIndex: openMenuId === song.id ? 100 : 1 }}
                             onClick={() => handleSongClick(song)}
                             onQueue={() => addToQueue(song)}
                             onDragStart={(e) => {
@@ -792,18 +834,18 @@ const SongListSection = ({
                                             </div>
                                             <div
                                                 className={styles.menuItem}
-                                                onMouseEnter={() => setSubMenuOpenId(song.id)}
-                                                onMouseLeave={() => setSubMenuOpenId(null)}
-                                                onClick={(e) => e.stopPropagation()}
+                                                onMouseEnter={() => handleSubMenuEnter(song.id)}
+                                                onMouseLeave={handleSubMenuLeave}
+                                                onClick={(e) => toggleSubMenuClick(e, song.id)}
                                             >
                                                 <span>Add to playlist</span>
                                                 {subMenuOpenId === song.id && (
-                                                    <div className={styles.subMenu}>
-                                                        <div className={styles.subMenuItem} onClick={() => { setShowPlaylistModal(true); setOpenMenuId(null); }}>
+                                                    <div className={styles.subMenu} onMouseEnter={() => handleSubMenuEnter(song.id)}>
+                                                        <div className={styles.subMenuItem} onClick={(e) => { e.stopPropagation(); setShowPlaylistModal(true); setOpenMenuId(null); }}>
                                                             <FaPlus /> New playlist
                                                         </div>
                                                         {playlists?.map(pl => (
-                                                            <div key={pl._id} className={styles.subMenuItem} onClick={() => { addToPlaylist(pl._id, song.id); setOpenMenuId(null); }}>
+                                                            <div key={pl._id} className={styles.subMenuItem} onClick={(e) => { e.stopPropagation(); addToPlaylist(pl._id, song.id); setOpenMenuId(null); }}>
                                                                 {pl.title}
                                                             </div>
                                                         ))}
@@ -813,6 +855,11 @@ const SongListSection = ({
                                             <div className={styles.menuItem} onClick={(e) => { e.stopPropagation(); addToLiked(song); setOpenMenuId(null); }}>
                                                 {likedSongs?.some(s => s.id === song.id) ? "Remove from Liked" : "Add to Liked"}
                                             </div>
+                                            {removeFromPlaylist && (
+                                                <div className={styles.menuItem} onClick={(e) => { e.stopPropagation(); removeFromPlaylist(song.id); setOpenMenuId(null); }}>
+                                                    <span style={{ color: '#ff5555' }}>Remove from this playlist</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>

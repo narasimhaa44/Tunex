@@ -73,7 +73,7 @@ const SwipeableSongItem = ({ children, onQueue, className, style, onClick, onDra
 
     return (
         <div
-            style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', width: '100%', cursor: 'pointer' }}
+            style={{ position: 'relative', touchAction: 'pan-y', width: '100%', cursor: 'pointer' }}
             onClick={handleClick} // ⭐ Use smart handler
             title={props.title}
         >
@@ -114,7 +114,7 @@ const SwipeableSongItem = ({ children, onQueue, className, style, onClick, onDra
                     transition: isDragging ? 'none' : 'transform 0.3s ease-out',
                     backgroundColor: style?.backgroundColor || 'inherit', // Ensure bg is handled
                     position: 'relative',
-                    zIndex: 1,
+                    zIndex: style?.zIndex || 1, // ⭐ Allow custom zIndex override
                     display: 'flex', // Ensure items are aligned
                     alignItems: 'center',
                     gap: '12px',

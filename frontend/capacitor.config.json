@@ -1,0 +1,9 @@
+{
+  "appId": "com.tunex.app",
+  "appName": "TuneX",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true,
+    "androidScheme": "http"
+  }
+}

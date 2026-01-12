@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import api from "../api/api";
+import Loading from "./Loading";
 
 export const AuthContext = createContext();
 
@@ -10,9 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-            withCredentials: true,
-        })
+        api.get("/api/auth/me")
             .then((res) => {
                 console.log(res.data.user);
                 console.log("Auth User:", res.data.user);
@@ -27,9 +24,14 @@ export const AuthProvider = ({ children }) => {
 
     // Logout
     const logout = async () => {
-        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`);
+        await api.post("/api/auth/logout");
+        localStorage.removeItem("token");
         setUser(null);
     };
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <AuthContext.Provider value={{ user, setUser, loading, logout }}>

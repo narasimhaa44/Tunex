@@ -4,10 +4,7 @@ import Header from "./Header.jsx";
 import MiddlePage from "./MiddlePage.jsx";
 import MusicPlayer from "./MusicPlayer.jsx";
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
-
-// Send cookies for authentication every time
-axios.defaults.withCredentials = true;
+import api from "../api/api";
 
 const Home = () => {
     const [currentSong, setCurrentSong] = useState(null);
@@ -48,8 +45,8 @@ const Home = () => {
         const fetchData = async () => {
             try {
                 const [songsRes, albumsRes] = await Promise.all([
-                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/songs/all`),
-                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/albums`)
+                    api.get(`/api/songs/all`),
+                    api.get(`/api/albums`)
                 ]);
 
                 console.log("Fetched songs:", songsRes.data.songs);

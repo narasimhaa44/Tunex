@@ -6,6 +6,7 @@ const { authenticateAccessToken } = require('../middleware/authMiddleware');
 router.post('/create', authenticateAccessToken, playlistController.createPlaylist);
 router.get('/my-playlists', authenticateAccessToken, playlistController.getUserPlaylists);
 router.post('/add-song', authenticateAccessToken, playlistController.addSongToPlaylist);
+router.post('/remove-song', authenticateAccessToken, playlistController.removeSongFromPlaylist);
 router.get('/:id', authenticateAccessToken, playlistController.getPlaylist);
 
 module.exports = router;

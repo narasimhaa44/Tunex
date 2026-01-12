@@ -17,16 +17,20 @@ const createRefreshToken = (payload) => jwt.sign(payload, process.env.REFRESH_TO
 // });
 const cookieOptions = (isProduction = false) => ({
   httpOnly: true,
-  secure: isProduction ? true : false,
-  sameSite: isProduction ? "none" : "lax",
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
   path: "/",   // <-- IMPORTANT
 });
 
 
 module.exports.register = async (req, res, next) => {
   try {
+    console.log("HEADERS:", req.headers);
+    console.log("🔥 REGISTER ROUTE HIT");
+    console.log("BODY:", req.body);
     const { username, password, displayName } = req.body;
-    if (!username || !password || !displayName)
+    const display = displayName || username;
+    if (!username || !password)
       return res.status(400).json({ error: 'Missing fields' });
 
     const existing = await User.findOne({ username });
@@ -41,7 +45,7 @@ module.exports.register = async (req, res, next) => {
     const user = await User.create({
       username,
       passwordHash,
-      displayName,
+      displayName:display,
       avatar,
     });
 
@@ -80,6 +84,8 @@ module.exports.login = async (req, res, next) => {
 
     res.json({
   ok: true,
+  accessToken,
+  refreshToken,
   user: {
     id: user._id,
     username: user.username,
@@ -126,6 +132,8 @@ module.exports.me = async (req, res, next) => {
 
     res.json({
       ok: true,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -146,7 +154,7 @@ module.exports.updateUser = async (req, res) => {
     }
 
     if (req.file) {
-      user.avatar = `http://localhost:5000/uploads/avatars/${req.file.filename}`;
+      user.avatar = `http://10.0.2.2:5000/uploads/avatars/${req.file.filename}`;
     }
 
     if (req.body.password) {
@@ -158,6 +166,8 @@ module.exports.updateUser = async (req, res) => {
 
     res.json({
       ok: true,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         username: user.username,
