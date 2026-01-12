@@ -25,7 +25,6 @@ app.use((req, res, next) => {
 // Middleware
 // (CORS configured below)
 
-app.use(cors({
     origin: [
       "https://tunex-x65w.onrender.com",
       "http://localhost:5173",
