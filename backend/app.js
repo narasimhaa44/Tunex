@@ -25,17 +25,17 @@ app.use((req, res, next) => {
 // Middleware
 // (CORS configured below)
 
-  cors({
+app.use(cors({
     origin: [
-      "https://tunex-x65w.onrender.com",
       "http://localhost:5173",
       "http://localhost",
       "http://10.0.2.2",
       "http://192.168.1.22:5173",
-      "capacitor://localhost"
+      "capacitor://localhost",
+      "https://tunex-x65w.onrender.com"
     ],
     credentials: true,
-  });
+}));
 
 
 app.use(express.json());
