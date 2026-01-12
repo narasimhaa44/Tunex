@@ -15,6 +15,29 @@ const Home = () => {
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(null);
 
+    // Enhanced Navigation with History
+    const handleNavigation = (page) => {
+        if (page === activePage) return;
+        window.history.pushState({ page }, "", `#${page}`);
+        setActivePage(page);
+    };
+
+    useEffect(() => {
+        // Initial load: replace state to ensure back works correctly
+        window.history.replaceState({ page: "Home" }, "", "#Home");
+
+        const handlePopState = (event) => {
+            if (event.state && event.state.page) {
+                setActivePage(event.state.page);
+            } else {
+                setActivePage("Home");
+            }
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => window.removeEventListener("popstate", handlePopState);
+    }, []);
+
     const [allSongs, setAllSongs] = useState([]); // ⭐ GLOBAL COLLECTION
     const [playbackSongs, setPlaybackSongs] = useState([]); // ⭐ ACTIVE CONTEXT (Album, Playlist, etc.)
     const [albums, setAlbums] = useState([]);
@@ -166,7 +189,7 @@ const Home = () => {
                 setPlaybackSongs={setPlaybackSongs}
                 albums={albums}
                 active={activePage}
-                setActive={setActivePage}
+                setActive={handleNavigation}
                 isShuffle={isShuffle}
                 setIsShuffle={setIsShuffle}
                 queue={queue}
