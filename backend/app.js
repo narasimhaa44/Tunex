@@ -35,8 +35,7 @@ app.use((req, res, next) => {
       "capacitor://localhost"
     ],
     credentials: true,
-  })
-);
+  });
 
 
 app.use(express.json());
