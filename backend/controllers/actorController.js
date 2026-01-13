@@ -3,9 +3,25 @@ const Song = require('../models/Song');
 
 module.exports.createActor = async (req, res) => {
   try {
-    const actor = await Actor.create(req.body);
+    console.log("createActor called with body:", req.body);
+    console.log("createActor file:", req.file);
+    const { name, bio, stats } = req.body;
+    let photoUrl = "";
+    if (req.file) {
+        // Construct URL based on where we are serving static files
+        // app.js serves /uploads at /uploads
+        photoUrl = `/uploads/avatars/${req.file.filename}`; 
+    }
+
+    const actor = await Actor.create({
+        name,
+        bio,
+        stats,
+        photoUrl
+    });
     res.json({ ok: true, actor });
   } catch (err) {
+    console.error("Create actor error:", err);
     res.status(500).json({ ok: false, message: 'Create actor failed' });
   }
 };

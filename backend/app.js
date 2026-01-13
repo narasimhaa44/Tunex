@@ -45,7 +45,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/uploads", express.static(require('path').join(__dirname, "uploads")));
+const path = require('path');
+// Serve uploads folder
+const uploadDir = path.join(__dirname, "uploads");
+console.log("Serving static files from:", uploadDir);
+app.use("/uploads", express.static(uploadDir));
 app.use("/api/songs", songRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/albums', require('./routes/album'));

@@ -1,60 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./HomeDashboard.module.css";
-import { FaPlay, FaHeart, FaMobileAlt, FaFan } from "react-icons/fa";
+import { FaPlay, FaHeart, FaMobileAlt, FaFan, FaPlus } from "react-icons/fa";
 import { MdAlbum } from "react-icons/md";
+import AddArtistModal from "./AddArtistModal";
 
-// Placeholder data for artists - User will update these images
-const ARTISTS = [
-    {
-        id: 1,
-        name: "Anirudh Ravichandran",
-        image: "/img/Anirudh.jpg",
-        stats: "Monthly Listeners: 12M",
-        bio: "The Rockstar of South Indian Cinema."
-    },
-    {
-        id: 2,
-        name: "A.R. Rahman",
-        image: "/img/Rehaman.jpeg",
-        stats: "Monthly Listeners: 28M",
-        bio: "The Mozart of Madras."
-    },
-    {
-        id: 3,
-        name: "Sid Sriram",
-        image: "/img/Sidsriram.jpg",
-        stats: "Monthly Listeners: 8M",
-        bio: "Soulful voice behind many hits."
-    },
-    {
-        id: 4,
-        name: "Shreya Ghoshal",
-        image: "/img/Shreya.jpg",
-        stats: "Monthly Listeners: 20M",
-        bio: "The melody queen."
-    },
-    {
-        id: 5,
-        name: "Thaman S",
-        image: "/img/Thaman.jpg",
-        stats: "Monthly Listeners: 7M",
-        bio: "Dynamic composer."
-    },
-    {
-        id: 6,
-        name: "Sinjith Yerramilli",
-        image: "/img/Sinjith-Yerramilli.jpg",
-        stats: "Monthly Listeners: 1M",
-        bio: "The melody Composer."
-    },
-    {
-        id: 7,
-        name: "Devi Sri Prasad",
-        image: "/img/Devisri.jpg",
-        stats: "Monthly Listeners: 20M",
-        bio: "The melody and mass composer."
-    }
-];
+// Initial static artists can be removed or kept as fallback
+// const ARTISTS = [ ... ]; 
 
 const HomeDashboard = ({
     albums,
@@ -63,8 +14,40 @@ const HomeDashboard = ({
     onPlayArtist, // New prop
     user
 }) => {
-    const [selectedArtist, setSelectedArtist] = useState(ARTISTS[0]);
+    const [artists, setArtists] = useState([]);
+    const [selectedArtist, setSelectedArtist] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const albumsRef = useRef(null);
+
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+    const fetchArtists = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/actors`);
+            const data = await res.json();
+            if (data.ok && data.actors.length > 0) {
+                setArtists(data.actors);
+                // Set default selected artist if none selected or ensuring persistence
+                if (!selectedArtist) setSelectedArtist(data.actors[0]);
+            }
+        } catch (error) {
+            console.error("Failed to fetch artists", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchArtists();
+    }, []);
+
+    const handleArtistAdded = () => {
+        fetchArtists();
+    };
+
+    const getImageUrl = (url) => {
+        if (!url) return "/img/Anirudh.jpg"; // Fallback
+        if (url.startsWith("http")) return url;
+        return `${API_BASE}${url}`;
+    };
 
     const scrollToAlbums = () => {
         albumsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -120,42 +103,52 @@ const HomeDashboard = ({
             <div className={styles.artistSection}>
                 {/* <h2 className={styles.sectionTitle}>Your Artists</h2> */}
                 <div className={styles.artistRow}>
-                    {ARTISTS.map((artist) => (
+                    {artists.map((artist) => (
                         <div
-                            key={artist.id}
-                            className={`${styles.artistCircle} ${selectedArtist.id === artist.id ? styles.active : ''}`}
+                            key={artist._id}
+                            className={`${styles.artistCircle} ${selectedArtist?._id === artist._id ? styles.active : ''}`}
                             onClick={() => setSelectedArtist(artist)}
                         >
                             <div className={styles.artistImageWrapper}>
-                                <img src={artist.image} alt={artist.name} />
+                                <img src={getImageUrl(artist.photoUrl)} alt={artist.name} />
                             </div>
                             <span className={styles.artistName}>{artist.name}</span>
                         </div>
                     ))}
+
+                    {/* Add Artist Button */}
+                    <div className={styles.artistCircle} onClick={() => setIsModalOpen(true)}>
+                        <div className={styles.artistImageWrapper} style={{ backgroundColor: '#2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <FaPlus style={{ fontSize: '30px', color: '#888' }} />
+                        </div>
+                        <span className={styles.artistName}>Add Artist</span>
+                    </div>
                 </div>
             </div>
 
             {/* Artist Spotlight (Dynamic) */}
-            <div className={styles.spotlightSection} key={selectedArtist.id}>
-                <img src={selectedArtist.image} alt={selectedArtist.name} className={styles.spotlightImage} />
-                <div className={styles.spotlightInfo}>
-                    <div className={styles.spotlightHeader}>
-                        <h2>{selectedArtist.name}</h2>
-                    </div>
-                    <div className={styles.spotlightStats}>
-                        <p>{selectedArtist.bio}</p>
-                        <p>•</p>
-                        <p>{selectedArtist.stats}</p>
-                    </div>
-                    <div className={styles.spotlightActions}>
-                        <button className={styles.playArtistBtn} onClick={() => onPlayArtist(selectedArtist)}>
-                            <FaPlay style={{ marginRight: '8px', fontSize: '12px' }} />
-                            Play
-                        </button>
-                        <button className={styles.followBtn}>Follow</button>
+            {selectedArtist && (
+                <div className={styles.spotlightSection} key={selectedArtist._id}>
+                    <img src={getImageUrl(selectedArtist.photoUrl)} alt={selectedArtist.name} className={styles.spotlightImage} />
+                    <div className={styles.spotlightInfo}>
+                        <div className={styles.spotlightHeader}>
+                            <h2>{selectedArtist.name}</h2>
+                        </div>
+                        <div className={styles.spotlightStats}>
+                            <p>{selectedArtist.bio}</p>
+                            <p>•</p>
+                            <p>{selectedArtist.stats}</p>
+                        </div>
+                        <div className={styles.spotlightActions}>
+                            <button className={styles.playArtistBtn} onClick={() => onPlayArtist(selectedArtist)}>
+                                <FaPlay style={{ marginRight: '8px', fontSize: '12px' }} />
+                                Play
+                            </button>
+                            <button className={styles.followBtn}>Follow</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Your Albums */}
             <div className={styles.artistSection} ref={albumsRef}>
@@ -171,7 +164,13 @@ const HomeDashboard = ({
                     ))}
                 </div>
             </div>
-        </div>
+
+            <AddArtistModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onArtistAdded={handleArtistAdded}
+            />
+        </div >
     );
 };
 

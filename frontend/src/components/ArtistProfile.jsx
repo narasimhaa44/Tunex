@@ -15,10 +15,16 @@ const ArtistProfile = ({
     onBack
 }) => {
     // Filter albums for this artist (for display in Albums section)
-    // We use the first name for broader matching (e.g. "Anirudh" matches "Anirudh Ravichander")
-    const normalize = (str) => str ? str.toLowerCase() : '';
-    const searchName = normalize(artist.name.split(' ')[0]);
-    const matches = (text) => normalize(text).includes(searchName);
+    const normalize = (str) => str ? str.toLowerCase().trim() : '';
+    // Use full name for search to avoid partial matches (e.g. "A.R." matching unrelated strings)
+    const searchName = normalize(artist.name);
+
+    // Check if text includes the Full Name or if Full Name includes text (for close matches)
+    const matches = (text) => {
+        if (!text) return false;
+        const normText = normalize(text);
+        return normText.includes(searchName) || searchName.includes(normText);
+    };
 
     const artistAlbums = albums ? albums.filter(album =>
         matches(album.artist) || matches(album.description)
@@ -78,6 +84,17 @@ const ArtistProfile = ({
         }
     };
 
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+    const getImageUrl = (url) => {
+        if (!url) return "/img/Anirudh.jpg"; // Fallback
+        if (url.startsWith("http")) return url;
+        // If it starts with /img, it's a static frontend asset
+        if (url.startsWith("/img")) return url;
+        // Otherwise it's a backend upload
+        return `${API_BASE}${url}`;
+    };
+
     return (
         <div className={styles.dashboardContainer}>
             <button onClick={onBack} style={{
@@ -93,7 +110,7 @@ const ArtistProfile = ({
             </button>
 
             <div className={styles.spotlightSection} style={{ marginTop: 0 }}>
-                <img src={artist.image} alt={artist.name} className={styles.spotlightImage} />
+                <img src={getImageUrl(artist.photoUrl || artist.image)} alt={artist.name} className={styles.spotlightImage} />
                 <div className={styles.spotlightInfo}>
                     <div className={styles.spotlightHeader}>
                         <h2>{artist.name}</h2>
