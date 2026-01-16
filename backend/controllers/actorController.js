@@ -1,16 +1,18 @@
 const Actor = require('../models/Actor');
 const Song = require('../models/Song');
 
+const cloudinary = require('../utils/cloudinary');
+
 module.exports.createActor = async (req, res) => {
   try {
-    console.log("createActor called with body:", req.body);
-    console.log("createActor file:", req.file);
     const { name, bio, stats } = req.body;
     let photoUrl = "";
+
     if (req.file) {
-        // Construct URL based on where we are serving static files
-        // app.js serves /uploads at /uploads
-        photoUrl = `/uploads/avatars/${req.file.filename}`; 
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "tunex/actors"
+      });
+      photoUrl = result.secure_url;
     }
 
     const actor = await Actor.create({

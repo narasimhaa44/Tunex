@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createActor, listActors, getSongsByActor } = require('../controllers/actorController');
-const upload = require('../middleware/upload');
+const upload = require('../middleware/multer');
 
 router.get('/', listActors);
 router.post('/', upload.single('image'), createActor);
