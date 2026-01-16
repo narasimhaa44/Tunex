@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 
 app.use(cors({
     origin: [
+      "https://tunex-x65w.onrender.com",
       "http://localhost:5173",
       "http://localhost",
       "http://10.0.2.2",
