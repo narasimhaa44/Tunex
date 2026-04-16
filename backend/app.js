@@ -72,30 +72,55 @@ app.post("/feedback", async (req, res) => {
 });
 
 
+// app.get("/songs/:mood", async (req, res) => {
+//   const mood = String(req.params.mood || "").toLowerCase();
+//   const rawTags = String(req.query.tags || "");
+//   const tags = rawTags
+//     .split(",")
+//     .map((tag) => tag.trim().toLowerCase())
+//     .filter(Boolean);
+
+//   try {
+//     const moodFilter = { mood };
+//     if (tags.length) {
+//       moodFilter.tags = { $in: tags };
+//     }
+
+//     let moodSongs = await SongMood.find(moodFilter).sort({ score: -1 });
+//     if (tags.length && moodSongs.length === 0) {
+//       moodSongs = await SongMood.find({ mood }).sort({ score: -1 });
+//     }
+
+//     const songIds = moodSongs.map(s => s.songId);
+
+//     const songs = await Song.find({
+//       _id: { $in: songIds }
+//     });
+//     const sortedSongs = songIds.map(id =>
+//       songs.find(song => song._id.toString() === id.toString())
+//     );
+
+//     res.json(sortedSongs);
+
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ error: "server error" });
+//   }
+// });
 app.get("/songs/:mood", async (req, res) => {
   const mood = String(req.params.mood || "").toLowerCase();
-  const rawTags = String(req.query.tags || "");
-  const tags = rawTags
-    .split(",")
-    .map((tag) => tag.trim().toLowerCase())
-    .filter(Boolean);
 
   try {
-    const moodFilter = { mood };
-    if (tags.length) {
-      moodFilter.tags = { $in: tags };
-    }
-
-    let moodSongs = await SongMood.find(moodFilter).sort({ score: -1 });
-    if (tags.length && moodSongs.length === 0) {
-      moodSongs = await SongMood.find({ mood }).sort({ score: -1 });
-    }
+    // 🔥 ONLY FILTER BY MOOD
+    const moodSongs = await SongMood.find({ mood }).sort({ score: -1 });
 
     const songIds = moodSongs.map(s => s.songId);
 
     const songs = await Song.find({
       _id: { $in: songIds }
     });
+
+    // 🔥 MAINTAIN ORDER
     const sortedSongs = songIds.map(id =>
       songs.find(song => song._id.toString() === id.toString())
     );
@@ -107,7 +132,6 @@ app.get("/songs/:mood", async (req, res) => {
     res.status(500).json({ error: "server error" });
   }
 });
-
 // global error catch
 app.use((err, req, res, next) => {
   console.error(err);
