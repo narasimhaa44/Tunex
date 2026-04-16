@@ -151,7 +151,7 @@ const MiddlePage = ({
     const query = tags.length
       ? `?tags=${encodeURIComponent(tags.join(","))}`
       : "";
-    const res = await fetch(`http://localhost:5000/songs/${mood}${query}`);
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/songs/${mood}${query}`);
     const data = await res.json();
 
     const formatted = data.map((s) => ({
@@ -260,7 +260,7 @@ const MiddlePage = ({
   };
 
   const sendFeedback = async (songId, liked) => {
-    await fetch("http://localhost:5000/feedback", {
+    await fetch(`${import.meta.env.VITE_API_BASE_URL}/feedback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ songId, liked }),
