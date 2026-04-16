@@ -13,23 +13,27 @@ const Header = ({ searchQuery, setSearchQuery }) => {
     const [theme, setTheme] = useState("dark");
     const { user } = useAuth();
     const [openSettings, setOpenSettings] = useState(false);
+    const dropdownRef = useRef(null);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-    const dropdownRef = useRef(null); // ⭐ NEW
+    const getAvatarUrl = (avatar) => {
+        if (!avatar) return "/img/profile.png";
+        if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
+        if (avatar.startsWith("/img/")) return avatar;
+        return API_BASE ? `${API_BASE}${avatar}` : avatar;
+    };
 
     useEffect(() => {
         document.body.classList.add("dark-theme");
     }, []);
 
-    // ⭐ CLOSE DROPDOWN WHEN CLICKING OUTSIDE
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
                 setIsOpen(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
@@ -49,7 +53,6 @@ const Header = ({ searchQuery, setSearchQuery }) => {
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
         setTheme(newTheme);
-
         if (newTheme === "dark") document.body.classList.add("dark-theme");
         else document.body.classList.remove("dark-theme");
     };
@@ -77,7 +80,7 @@ const Header = ({ searchQuery, setSearchQuery }) => {
                     </div>
 
                     <div className={styles.profile}>
-                        <div className="dropdown text-end" ref={dropdownRef}> {/* ⭐ ATTACH REF */}
+                        <div className="dropdown text-end" ref={dropdownRef}>
                             <a
                                 href="#"
                                 className={`d-block link-body-emphasis text-decoration-none ${isOpen ? "show" : ""}`}
@@ -87,35 +90,19 @@ const Header = ({ searchQuery, setSearchQuery }) => {
                                 }}
                             >
                                 <img
-                                    src={user?.avatar || "/img/profile.png"}
+                                    src={getAvatarUrl(user?.avatar)}
                                     alt="profile"
                                     className={styles.profileImage}
                                     onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/img/profile.png";
-                                        console.error("Error loading profile image:", user?.avatar);
+                                        e.currentTarget.onerror = null;
+                                        e.currentTarget.src = "/img/profile.png";
                                     }}
                                 />
                             </a>
 
-                            <ul
-                                className={`dropdown-menu ${isOpen ? "show" : ""}`}
-                                style={
-                                    isOpen
-                                        ? {
-                                            position: "absolute",
-                                            inset: "0px 0px auto auto",
-                                            margin: 0,
-                                            transform: "translate3d(0px, 34px, 0px)",
-                                        }
-                                        : {}
-                                }
-                            >
+                            <ul className={`dropdown-menu ${isOpen ? "show" : ""}`}>
                                 <li>
-                                    <button
-                                        className="dropdown-item d-flex align-items-center gap-2"
-                                        onClick={toggleTheme}
-                                    >
+                                    <button className="dropdown-item" onClick={toggleTheme}>
                                         {theme === "light" ? <MdDarkMode /> : <MdLightMode />}
                                         {theme === "light" ? "Dark Theme" : "Light Theme"}
                                     </button>

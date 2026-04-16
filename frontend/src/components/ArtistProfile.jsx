@@ -14,68 +14,106 @@ const ArtistProfile = ({
     onSongClick,
     onBack
 }) => {
-    // Filter albums for this artist (for display in Albums section)
-    const normalize = (str) => str ? str.toLowerCase().trim() : '';
-    // Use full name for search to avoid partial matches (e.g. "A.R." matching unrelated strings)
-    const searchName = normalize(artist.name);
+    // State for songs to display
+    const [artistSongs, setArtistSongs] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
-    // Check if text includes the Full Name or if Full Name includes text (for close matches)
-    const matches = (text) => {
-        if (!text) return false;
-        const normText = normalize(text);
-        return normText.includes(searchName) || searchName.includes(normText);
+    // Reusing existing logic to filter local songs as fallback
+    const getLocalArtistSongs = () => {
+        const normalize = (str) => str ? str.toLowerCase().trim() : '';
+        const searchName = normalize(artist.name);
+
+        const matches = (text) => {
+            if (!text) return false;
+            const normText = normalize(text);
+            return normText.includes(searchName) || searchName.includes(normText);
+        };
+
+        const artistAlbums = albums ? albums.filter(album =>
+            matches(album.artist) || matches(album.description)
+        ) : [];
+
+        const artistAlbumSongIds = new Set();
+        artistAlbums.forEach(album => {
+            if (album.songs && Array.isArray(album.songs)) {
+                album.songs.forEach(songId => {
+                    const id = typeof songId === 'object' ? songId._id : songId;
+                    artistAlbumSongIds.add(String(id));
+                });
+            }
+        });
+
+        return songs.filter(song => {
+            if (matches(song.artist)) return true;
+            if (song.artists && song.artists.some(a => matches(a))) return true;
+            if (artistAlbumSongIds.has(String(song._id)) || artistAlbumSongIds.has(String(song.id))) return true;
+
+            let albumObj = null;
+            if (song.album) {
+                if (typeof song.album === 'object' && (song.album.description || song.album.artist)) {
+                    albumObj = song.album;
+                } else if (albums) {
+                    const albumId = typeof song.album === 'object' ? song.album._id : song.album;
+                    albumObj = albums.find(a => a._id === albumId);
+                }
+            }
+
+            if (albumObj) {
+                if (matches(albumObj.artist)) return true;
+                if (matches(albumObj.description)) return true;
+            }
+
+            return false;
+        });
     };
 
-    const artistAlbums = albums ? albums.filter(album =>
-        matches(album.artist) || matches(album.description)
-    ) : [];
+    // Fetch songs when artist changes
+    React.useEffect(() => {
+        if (!artist || !artist.name) return; // Safety check
 
-    // Collect all song IDs from these albums (Reverse Lookup)
-    // This handles cases where song.album is null, but the Album document has the song ID.
-    const artistAlbumSongIds = new Set();
-    artistAlbums.forEach(album => {
-        if (album.songs && Array.isArray(album.songs)) {
-            album.songs.forEach(songId => {
-                // songId might be an object (if populated) or string/ObjectId
-                const id = typeof songId === 'object' ? songId._id : songId;
-                artistAlbumSongIds.add(String(id));
-            });
-        }
-    });
+        const fetchArtistSongs = async () => {
+            setIsLoading(true);
 
-    // Robust filtering logic
-    const artistSongs = songs.filter(song => {
-        // 1. Check Song Artist (String)
-        if (matches(song.artist)) return true;
+            // 1. Get Local Songs (Fallback)
+            const localSongs = getLocalArtistSongs();
+            setArtistSongs(localSongs); // Show local immediately while fetching
 
-        // 2. Check Song Artists (Array)
-        if (song.artists && song.artists.some(a => matches(a))) return true;
+            // 2. Try Fetching from Spotify
+            try {
+                // Use fetch/axios to call our backend
+                // Simple fetch for now
+                const response = await fetch(`${API_BASE}/api/spotify/artist-latest/${encodeURIComponent(artist.name)}`);
+                const data = await response.json();
 
-        // 3. Check if Song is in one of the Artist's Albums (Reverse Lookup)
-        // We use String() to ensure we match ObjectId to string comparisons correctly
-        if (artistAlbumSongIds.has(String(song._id)) || artistAlbumSongIds.has(String(song.id))) return true;
+                if (data.success && data.songs.length > 0) {
+                    console.log(`Fetched ${data.songs.length} songs for ${artist.name} from Spotify`);
 
-        // 4. Check Album metadata linked from Song (Forward Lookup)
-        let albumObj = null;
-        if (song.album) {
-            // Check if song.album is already populated object
-            if (typeof song.album === 'object' && (song.album.description || song.album.artist)) {
-                albumObj = song.album;
+                    // Normalize Spotify songs to match app structure
+                    const formattedSongs = data.songs.map(s => ({
+                        ...s,
+                        id: s._id,
+                        cover: s.coverUrl,
+                        audio: s.previewKey || s.audioUrl, // Ensure audio property exists
+                        artist: s.artist || artist.name,
+                        album: s.album || "Single"
+                    }));
+
+                    setArtistSongs(formattedSongs); // REPLACE local with Spotify results
+                } else {
+                    console.log("No Spotify songs found, keeping local fallback.");
+                }
+
+            } catch (error) {
+                console.error("Error fetching artist songs from Spotify:", error);
+                // Keep local songs on error
+            } finally {
+                setIsLoading(false);
             }
-            // Else try to find it in the albums prop
-            else if (albums) {
-                const albumId = typeof song.album === 'object' ? song.album._id : song.album;
-                albumObj = albums.find(a => a._id === albumId);
-            }
-        }
+        };
 
-        if (albumObj) {
-            if (matches(albumObj.artist)) return true;
-            if (matches(albumObj.description)) return true;
-        }
-
-        return false;
-    });
+        fetchArtistSongs();
+    }, [artist]); // Dependencies: ONLY artist, to prevent infinite loops
 
     const handleShufflePlay = () => {
         if (artistSongs.length > 0) {
@@ -84,7 +122,6 @@ const ArtistProfile = ({
         }
     };
 
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
     const getImageUrl = (url) => {
         if (!url) return "/img/Anirudh.jpg"; // Fallback

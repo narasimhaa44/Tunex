@@ -1,0 +1,119 @@
+.moodCard {
+  width: 100%;
+  border-radius: 18px;
+  padding: 18px 16px;
+  background: var(--header-bg);
+  border: 1px solid var(--border-color, rgba(128, 128, 128, 0.35));
+}
+
+.title {
+  margin: 0;
+  text-align: center;
+  color: var(--text-color);
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  letter-spacing: 0.2px;
+}
+
+.subtitle {
+  margin: 8px 0 16px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.72;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+}
+
+.moodGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.moodChip {
+  border: 1px solid var(--border-color, rgba(148, 163, 184, 0.45));
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--text-color);
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  text-transform: capitalize;
+  padding: 10px 16px;
+  min-height: 40px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease,
+    border-color 0.2s ease, color 0.2s ease;
+}
+
+.moodChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.16);
+}
+
+.moodChip:active {
+  transform: scale(0.96);
+}
+
+.activeMood {
+  background: #ffffff;
+  color: #0b0b0b;
+  border-color: #ffffff;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .moodCard {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .moodGrid {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    padding: 4px 2px 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .moodGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .moodChip {
+    flex: 0 0 auto;
+    max-width: none;
+    padding: 10px 12px;
+    min-height: 38px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .moodChip {
+    min-width: max-content;
+  }
+}
+
+:global(body.dark-theme) .moodCard {
+  background: rgba(20, 20, 20, 0.72);
+}
+
+:global(body.dark-theme) .moodChip {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+:global(body.dark-theme) .activeMood {
+  background: #ffffff;
+  color: #0b0b0b;
+  border-color: #ffffff;
+  box-shadow: none;
+}
+
+:global(body.dark-theme) .moodChip:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
+}

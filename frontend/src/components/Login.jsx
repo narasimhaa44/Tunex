@@ -4,6 +4,7 @@ import axios from "axios";
 import { MdSunny, MdDarkMode } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { Music } from "lucide-react";
 
 axios.defaults.withCredentials = true;
 
@@ -30,6 +31,9 @@ const Login = () => {
     const toggleTheme = () => {
         setTheme(theme === "dark" ? "light" : "dark");
     };
+    // const handleSpotifyLogin = () => {
+    //     window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/auth/spotify`;
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -95,7 +99,6 @@ const Login = () => {
                     {error && <p className={styles.error}>{error}</p>}
 
                     <button type="submit" className={styles.button}>Login</button>
-
                     <p className={styles.para1}>
                         Don't have an account? <a href="/register">Register</a>
                     </p>

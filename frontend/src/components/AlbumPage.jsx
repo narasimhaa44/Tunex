@@ -210,32 +210,6 @@ export default function AlbumPage({
 
                         {/* Action Buttons Row */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '20px' }}>
-                            {/* <FaRandom
-                                size={20}
-                                style={{ color: isShuffle ? '#1db954' : 'var(--text-color)', opacity: isShuffle ? 1 : 0.7, cursor: 'pointer' }}
-                                title="Shuffle"
-                                onClick={() => setIsShuffle(!isShuffle)}
-                            /> */}
-                            {/* <div
-                                onClick={toggleLike}
-                                style={{
-                                    backgroundColor: isLiked ? '#1ed760' : 'transparent',
-                                    border: isLiked ? 'none' : '1px solid #888',
-                                    borderRadius: '50%',
-                                    padding: '10px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s'
-                                }}
-                            >
-                                <FaHeart size={20} color={isLiked ? "black" : "var(--text-color)"} />
-                            </div> */}
-                            {/* <div style={{ border: '2px solid #888', borderRadius: '50%', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                                <FaDownload size={16} style={{ color: 'var(--text-color)' }} />
-                            </div> */}
-                            {/* Delete Option */}
                             <FaTrash
                                 size={20}
                                 style={{ color: 'var(--text-color)', opacity: 0.7, cursor: 'pointer' }}

@@ -6,22 +6,20 @@ import Login from './components/Login.jsx'
 import Register from './components/Register.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import CreateAlbum from './components/CreateAlbum.jsx'
-
 import { AuthProvider } from './components/AuthContext.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './index.css'
 import axios from 'axios';
 
-// 🛑 FORCE UNREGISTER SERVICE WORKER (Fix for lingering PWA)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const registration of registrations) {
-      console.log('Unregistering SW:', registration);
-      registration.unregister();
-    }
-  });
-}
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker.getRegistrations().then((registrations) => {
+//     for (const registration of registrations) {
+//       console.log('Unregistering SW:', registration);
+//       registration.unregister();
+//     }
+//   });
+// }
 
 axios.defaults.withCredentials = true;
 

@@ -132,8 +132,6 @@ module.exports.me = async (req, res, next) => {
 
     res.json({
       ok: true,
-      accessToken,
-      refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -166,8 +164,6 @@ module.exports.updateUser = async (req, res) => {
 
     res.json({
       ok: true,
-      accessToken,
-      refreshToken,
       user: {
         id: user._id,
         username: user.username,

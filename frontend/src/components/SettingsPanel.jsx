@@ -6,12 +6,21 @@ import { MdClose, MdEdit, MdCameraAlt } from "react-icons/md";
 
 const SettingsPanel = ({ onClose }) => {
     const { user, setUser } = useAuth();
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+    const getAvatarUrl = (avatar) => {
+        if (!avatar) return "/img/profile.png";
+        if (avatar.startsWith("blob:")) return avatar;
+        if (avatar.startsWith("http://") || avatar.startsWith("https://")) return avatar;
+        if (avatar.startsWith("/img/")) return avatar;
+        return API_BASE ? `${API_BASE}${avatar}` : avatar;
+    };
 
     const [displayName, setDisplayName] = useState(user?.displayName || "");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [avatarFile, setAvatarFile] = useState(null);
-    const [preview, setPreview] = useState(user?.avatar || "/img/profile.png");
+    const [preview, setPreview] = useState(getAvatarUrl(user?.avatar));
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 

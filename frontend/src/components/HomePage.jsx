@@ -1,4 +1,3 @@
-
 import "./HomePage.module.css";
 import Header from "./Header.jsx";
 import MiddlePage from "./MiddlePage.jsx";

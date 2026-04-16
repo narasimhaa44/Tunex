@@ -139,10 +139,8 @@ const SwipeableSongItem = ({ children, onQueue, className, style, onClick, onDra
                 bottom: 0,
                 width: `${offsetX}px`,
                 backgroundColor: '#1db954',
-                zIndex: 2, // Above content to mask? No, zIndex 0 is behind.
-                // But wait, if we slide RIGHT, we want to see what's BEHIND.
-                // The zIndex 0 background is behind ZIndex 1 content. Correct.
-                display: 'none' // We don't need this overlay if we have the background.
+                zIndex: 2,
+                display: 'none'
             }}>
             </div>
         </div>

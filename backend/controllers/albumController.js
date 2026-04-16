@@ -55,7 +55,7 @@ module.exports.getAlbumById = async (req, res) => {
   }
 };
 
-// add a song to album (and set song.album)
+// add a song to album 
 module.exports.addSongToAlbum = async (req, res) => {
   try {
     const { songId } = req.body;
@@ -69,7 +69,7 @@ module.exports.addSongToAlbum = async (req, res) => {
     song.album = album._id;
     await song.save();
 
-    // keep album.songs in sync (optional)
+    // keep album.songs in sync
     if (!album.songs.includes(song._id)) {
       album.songs.push(song._id);
       await album.save();

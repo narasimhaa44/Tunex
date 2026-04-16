@@ -3,28 +3,43 @@ import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom } from "react-
 import { MdQueueMusic } from "react-icons/md";
 import { useState } from "react";
 
-const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, songs, progress, currentTime, duration, audioRef, playNextSong, playPreviousSong, isShuffle, setIsShuffle, queue, setQueue, showQueue, setShowQueue }) => {
+const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, songs, progress, currentTime, duration, audioRef, playNextSong, playPreviousSong, isShuffle, setIsShuffle, queue, setQueue, showQueue, setShowQueue, onSeek }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const togglePlayPause = () => {
         setIsPlaying(!isPlaying);
     };
 
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
+    const getImageUrl = (url) => {
+        if (!url) return "/img/logo.png"; // Fallback to App Logo
+        if (url.startsWith("http")) return url;
+        if (url.startsWith("/img")) return url;
+        return `${API_BASE}${url}`;
+    };
 
     const handleProgressBarClick = (e) => {
-        const progressBar = e.currentTarget;
-        const audio = audioRef.current;
-        if (!progressBar || !audio) return;
+        if (!onSeek && !audioRef?.current) return;
 
+        const progressBar = e.currentTarget;
         const rect = progressBar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const width = rect.width;
         const percentage = clickX / width;
-        const newTime = percentage * audio.duration;
 
-        audio.currentTime = newTime;
+        // Use passed duration if available, else fallback to audioRef (local only)
+        const totalDuration = duration || audioRef?.current?.duration || 0;
+        const newTime = percentage * totalDuration;
+
+        if (onSeek) {
+            onSeek(newTime);
+        } else if (audioRef?.current) {
+            // Fallback for older usage without onSeek
+            audioRef.current.currentTime = newTime;
+        }
     };
+
 
     const formatTime = (time) => {
         if (isNaN(time)) return "0:00";
@@ -41,7 +56,7 @@ const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, son
             {isModalOpen && (
                 <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <img src={currentSong.cover} alt={currentSong.title} className={styles.modalCover} />
+                        <img src={getImageUrl(currentSong.cover || currentSong.coverUrl)} alt={currentSong.title} className={styles.modalCover} />
                         <div className={styles.modalInfo}>
                             <h2 className={styles.modalTitle}>{currentSong.title}</h2>
                             <p className={styles.modalArtist}>{currentSong.artist}</p>
@@ -80,8 +95,9 @@ const MusicPlayer = ({ currentSong, setCurrentSong, isPlaying, setIsPlaying, son
 
             {/* Footer Player Bar (Spotify Style) */}
             <div className={styles.playerBar}>
+
                 <div className={styles.songInfo} onClick={() => setIsModalOpen(true)}>
-                    <img src={currentSong.cover} alt={currentSong.title} className={styles.coverArt} />
+                    <img src={getImageUrl(currentSong.cover || currentSong.coverUrl)} alt={currentSong.title} className={styles.coverArt} />
                     <div className={styles.textInfo}>
                         <p className={styles.title}>{currentSong.title}</p>
                         <p className={styles.artist}>

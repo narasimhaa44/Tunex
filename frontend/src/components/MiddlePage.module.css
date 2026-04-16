@@ -715,6 +715,98 @@
     margin-left: auto;
 }
 
+.feedbackActions {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+    position: relative;
+}
+
+.feedbackBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.feedbackBtn:hover {
+    transform: translateY(-1px) scale(1.04);
+}
+
+.feedbackBtn:active {
+    transform: scale(0.92);
+}
+
+.feedbackLike {
+    border-color: rgba(34, 197, 94, 0.45);
+    background: rgba(34, 197, 94, 0.14);
+    color: #22c55e;
+}
+
+.feedbackLike:hover {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+
+.feedbackSkip {
+    border-color: rgba(148, 163, 184, 0.45);
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+}
+
+.feedbackSkip:hover {
+    box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.14);
+}
+
+.feedbackPulse {
+    animation: feedbackPop 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feedbackToast {
+    position: absolute;
+    left: 0;
+    top: -34px;
+    background: rgba(15, 23, 42, 0.9);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.4);
+    animation: feedbackToastIn 0.2s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes feedbackPop {
+    0% {
+        transform: scale(0.92);
+    }
+    40% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes feedbackToastIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .likedIcon {
     color: #1ed760; /* Spotify Green */
     font-size: 18px;
@@ -840,6 +932,150 @@
     
     .subMenu::after {
         display: none;
+    }
+
+    .songListContainer {
+        padding-right: 0;
+        overflow-x: hidden;
+    }
+
+    .songList {
+        overflow-x: hidden;
+    }
+
+    /* Compact mobile song rows */
+    .songItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px !important;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: visible;
+        position: relative;
+    }
+
+    .songCover {
+        width: 42px !important;
+        height: 42px !important;
+        border-radius: 7px !important;
+        flex-shrink: 0;
+    }
+
+    .songInfo {
+        flex: 1;
+        min-width: 0;
+        max-width: calc(100vw - 186px);
+    }
+
+    .songTitle {
+        display: -webkit-box;
+        width: 100%;
+        max-width: 100%;
+        font-size: 0.86rem;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.1;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 2.2em;
+    }
+
+    .songArtist {
+        display: -webkit-box;
+        width: 100%;
+        font-size: 0.72rem !important;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.1;
+        max-width: 100%;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 2.2em;
+    }
+
+    .songDuration {
+        display: none;
+    }
+
+    .songOptions {
+        margin-left: 0;
+        gap: 4px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 8;
+    }
+
+    .likedIcon {
+        display: none;
+    }
+
+    .feedbackActions {
+        margin-left: 0;
+        margin-top: 0;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    .feedbackBtn {
+        width: 24px;
+        height: 24px;
+        border-width: 1px;
+    }
+
+    .feedbackBtn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .menuIcon {
+        font-size: 16px;
+    }
+
+    .menuContainer {
+        position: relative;
+        z-index: 20;
+    }
+
+    .dropdownMenu {
+        right: 0;
+        z-index: 30;
+    }
+
+    .feedbackToast {
+        top: -30px;
+        right: 0;
+        left: auto;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 380px) {
+    .songInfo {
+        max-width: calc(100vw - 172px);
+    }
+
+    .songTitle {
+        font-size: 0.8rem;
+    }
+
+    .songArtist {
+        font-size: 0.68rem !important;
+    }
+
+    .feedbackBtn {
+        width: 22px;
+        height: 22px;
+    }
+
+    .feedbackBtn svg {
+        width: 11px;
+        height: 11px;
     }
 }
 

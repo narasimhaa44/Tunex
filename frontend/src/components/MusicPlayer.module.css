@@ -19,7 +19,7 @@
     align-items: center;
     gap: 15px;
     flex: 1;
-    min-width: 180px;
+    min-width: 0; /* Allow shrinking */
 }
 
 .coverArt {
@@ -27,12 +27,14 @@
     height: 60px;
     border-radius: 8px;
     object-fit: cover;
+    flex-shrink: 0; /* Prevent image squishing */
 }
 
 .textInfo {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    min-width: 0; /* Allow shrinking */
 }
 
 .title {
@@ -49,6 +51,9 @@
     font-size: 12px;
     color: #888;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .playerControls {
@@ -385,7 +390,7 @@
 
     .playerControls {
         gap: 8px;
-        pointer-events: none; /* Disable controls on small screens, use modal instead */
+        /* pointer-events: none;  <-- REMOVED disabling controls */
     }
 
     .controls {

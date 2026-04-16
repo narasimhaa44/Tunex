@@ -12,7 +12,7 @@ const HomeDashboard = ({
     onAlbumClick,
     setActive,
     onPlayArtist, // New prop
-    user
+    // user
 }) => {
     const [artists, setArtists] = useState([]);
     const [selectedArtist, setSelectedArtist] = useState(null);
