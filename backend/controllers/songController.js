@@ -43,11 +43,11 @@ module.exports.uploadSong = async (req, res) => {
         // ============================
         axios.post(`${process.env.ML_API_URL}/predict`, {
             audioUrl: audioUpload.secure_url
-        })
+        },{ timeout: 15000 })
             .then(async (mlRes) => {
                 console.log("ML RESPONSE:", mlRes.data);
 
-                const mood = mlRes.data.mood;
+                const mood = mlRes.data.mood || "chill";
 
                 const tagMap = {
                     chill: ["smooth", "peaceful", "soothing"],
@@ -78,6 +78,18 @@ module.exports.uploadSong = async (req, res) => {
             })
             .catch(err => {
                 console.log("❌ ML FAILED:", err.message);
+                    await SongMood.updateOne(
+        { songId: song._id },
+        {
+            $set: {
+                songId: song._id,
+                mood: "chill",
+                tags: ["smooth"],
+                score: 0.1
+            }
+        },
+        { upsert: true }
+    );
             });
 
     } catch (error) {
