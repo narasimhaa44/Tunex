@@ -45,7 +45,8 @@ module.exports.uploadSong = async (req, res) => {
             audioUrl: audioUpload.secure_url
         },{ timeout: 15000 })
             .then(async (mlRes) => {
-                console.log("ML RESPONSE:", mlRes.data);
+                // console.log("ML RESPONSE:", mlRes.data);
+                console.log("🎯 ML RESPONSE:", JSON.stringify(mlRes.data));
 
                 const mood = mlRes.data.mood || "chill";
 
