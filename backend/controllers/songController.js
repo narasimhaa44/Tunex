@@ -77,7 +77,7 @@ module.exports.uploadSong = async (req, res) => {
 
                 console.log("✅ Mood saved:", mood);
             })
-            .catch(err => {
+            .catch(async(err) => {
                 console.log("❌ ML FAILED:", err.message);
                     await SongMood.updateOne(
         { songId: song._id },
